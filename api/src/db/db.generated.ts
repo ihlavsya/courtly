@@ -9,9 +9,22 @@ export type Generated<T> = T extends ColumnType<infer S, infer I, infer U>
   ? ColumnType<S, I | undefined, U>
   : ColumnType<T, T | undefined, T>;
 
+export type SportType = "badminton" | "padel" | "pickleball" | "squash" | "tennis";
+
 export type Timestamp = ColumnType<Date, Date | string, Date | string>;
 
 export type UserRole = "admin" | "player";
+
+export interface Courts {
+  closesAt: Generated<string>;
+  createdAt: Generated<Timestamp>;
+  hourlyPriceCents: number;
+  id: Generated<number>;
+  isActive: Generated<boolean>;
+  name: string;
+  opensAt: Generated<string>;
+  sportType: SportType;
+}
 
 export interface Pgmigrations {
   id: Generated<number>;
@@ -34,6 +47,7 @@ export interface Users {
 }
 
 export interface DB {
+  courts: Courts;
   pgmigrations: Pgmigrations;
   sessions: Sessions;
   users: Users;

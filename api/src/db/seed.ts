@@ -1,5 +1,5 @@
 import { hash } from "argon2";
-import type { UserRole } from "@db/db.generated.ts";
+import type { SportType, UserRole } from "@db/db.generated.ts";
 import { db } from "@shared/db.ts";
 
 type DemoUser = {
@@ -14,8 +14,22 @@ const DEMO_USERS: DemoUser[] = [
   { email: "player@courtly.test", role: "player" },
 ];
 
+type DemoCourt = {
+  name: string;
+  sportType: SportType;
+  hourlyPriceCents: number;
+};
+
+const DEMO_COURTS: DemoCourt[] = [
+  { name: "Center Court", sportType: "tennis", hourlyPriceCents: 3500 },
+  { name: "Riverside Court", sportType: "tennis", hourlyPriceCents: 2500 },
+  { name: "Shuttle Hall", sportType: "badminton", hourlyPriceCents: 1800 },
+  { name: "Glass Box", sportType: "squash", hourlyPriceCents: 2000 },
+];
+
 try {
   await seedDemoUsers();
+  await seedDemoCourts();
 } finally {
   await db.destroy();
 }
@@ -27,6 +41,14 @@ async function seedDemoUsers() {
     .insertInto("users")
     .values(rows)
     .onConflict((conflict) => conflict.column("email").doNothing())
+    .execute();
+}
+
+async function seedDemoCourts() {
+  await db
+    .insertInto("courts")
+    .values(DEMO_COURTS)
+    .onConflict((conflict) => conflict.doNothing())
     .execute();
 }
 
