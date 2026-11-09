@@ -15,6 +15,16 @@ export type Timestamp = ColumnType<Date, Date | string, Date | string>;
 
 export type UserRole = "admin" | "player";
 
+export interface Bookings {
+  cancelledAt: Timestamp | null;
+  courtId: number;
+  createdAt: Generated<Timestamp>;
+  id: Generated<string>;
+  priceCents: number;
+  timeSlot: string;
+  userId: string;
+}
+
 export interface Courts {
   closesAt: Generated<string>;
   createdAt: Generated<Timestamp>;
@@ -47,6 +57,7 @@ export interface Users {
 }
 
 export interface DB {
+  bookings: Bookings;
   courts: Courts;
   pgmigrations: Pgmigrations;
   sessions: Sessions;
