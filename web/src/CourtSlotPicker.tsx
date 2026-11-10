@@ -2,7 +2,7 @@ import { useQuery } from "@tanstack/react-query";
 import { useState } from "react";
 import type { Booking, CourtSlot, DurationHours, TimeRange } from "./api/bookings.ts";
 import { buildCourtDaySlotsQueryOptions, useCreateBooking } from "./api/bookings.ts";
-import { ApiError } from "./api/client.ts";
+import { readErrorMessage } from "./api/client.ts";
 import type { Court } from "./api/courts.ts";
 import { BookingConfirmationDialog } from "./BookingConfirmationDialog.tsx";
 import { formatCourtHour, formatHourRange, formatPrice, listBookingDays, readCourtDate } from "./courtDisplay.ts";
@@ -136,7 +136,7 @@ export function CourtSlotPicker({ court }: { court: Court }) {
       </div>
       {createBooking.isError && (
         <p role="alert" className="text-sm text-red-600">
-          {getBookingErrorMessage(createBooking.error)}
+          {readErrorMessage(createBooking.error)}
         </p>
       )}
       <button
@@ -220,10 +220,4 @@ function buildBookButtonLabel(
   const totalPrice = formatPrice(court.hourlyPriceCents * draft.durationHours);
 
   return `Book ${formatHourRange(selectedRange)} · ${totalPrice}`;
-}
-
-function getBookingErrorMessage(error: Error) {
-  if (error instanceof ApiError && error.serverMessage !== undefined) return error.serverMessage;
-
-  return "Something went wrong. Try again.";
 }

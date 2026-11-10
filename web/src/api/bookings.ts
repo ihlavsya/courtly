@@ -67,6 +67,17 @@ export function useCreateBooking() {
   });
 }
 
+export function useCancelBooking() {
+  return useMutation({
+    mutationFn: cancelBooking,
+    onSettled: () =>
+      Promise.all([
+        queryClient.invalidateQueries({ queryKey: [COURT_DAY_SLOTS_KEY] }),
+        queryClient.invalidateQueries({ queryKey: [MY_BOOKINGS_KEY] }),
+      ]),
+  });
+}
+
 async function fetchMyBookings(): Promise<PlayerBookings> {
   const { upcoming, past } = await requestJson<PlayerBookingsResponse>("/bookings");
 
@@ -88,4 +99,8 @@ async function createBooking(newBooking: NewBooking) {
   const { booking } = await postJson<{ booking: Booking }>("/bookings", newBooking);
 
   return booking;
+}
+
+async function cancelBooking(bookingId: string) {
+  await postJson(`/bookings/${bookingId}/cancel`, {});
 }

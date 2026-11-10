@@ -5,6 +5,7 @@ type ErrorBody = {
 };
 
 const API_BASE_PATH = "/api";
+const FALLBACK_ERROR_MESSAGE = "Something went wrong. Try again.";
 
 export class ApiError extends Error {
   readonly status: number;
@@ -33,6 +34,12 @@ export function postJson<ResponseBody>(path: string, body: unknown) {
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify(body),
   });
+}
+
+export function readErrorMessage(error: Error) {
+  if (error instanceof ApiError && error.serverMessage !== undefined) return error.serverMessage;
+
+  return FALLBACK_ERROR_MESSAGE;
 }
 
 async function readServerMessage(response: Response) {

@@ -3,6 +3,7 @@ import { Link } from "@tanstack/react-router";
 import type { ReactNode } from "react";
 import type { PlayerBooking } from "./api/bookings.ts";
 import { myBookingsQueryOptions } from "./api/bookings.ts";
+import { CancelBookingButton } from "./CancelBookingButton.tsx";
 import { formatBookingTime, formatPrice, SPORT_EMOJIS } from "./courtDisplay.ts";
 
 type BookingStatus = "booked" | "cancelled";
@@ -18,6 +19,15 @@ type BookingsSectionProps = {
   bookings: PlayerBooking[];
   emptyState: ReactNode;
   className?: string;
+  canCancel?: boolean;
+};
+
+type BookingsTableProps = Pick<BookingsSectionProps, "bookings"> & {
+  canCancel: boolean;
+};
+
+type BookingRowProps = Pick<BookingsTableProps, "canCancel"> & {
+  booking: PlayerBooking;
 };
 
 const CELL_CLASS_NAME = "px-4 py-3";
@@ -45,6 +55,7 @@ export function MyBookingsPage() {
             title="Upcoming"
             bookings={bookingsQuery.data.upcoming}
             emptyState={<NoUpcomingBookings />}
+            canCancel
           />
           <BookingsSection
             title="Past"
@@ -69,16 +80,20 @@ function NoUpcomingBookings() {
   );
 }
 
-function BookingsSection({ title, bookings, emptyState, className }: BookingsSectionProps) {
+function BookingsSection({ title, bookings, emptyState, className, canCancel = false }: BookingsSectionProps) {
   return (
     <section className={className}>
       <h2 className="mb-4 text-lg font-semibold text-slate-900">{title}</h2>
-      {bookings.length === 0 ? <p className="text-slate-500">{emptyState}</p> : <BookingsTable bookings={bookings} />}
+      {bookings.length === 0 ? (
+        <p className="text-slate-500">{emptyState}</p>
+      ) : (
+        <BookingsTable bookings={bookings} canCancel={canCancel} />
+      )}
     </section>
   );
 }
 
-function BookingsTable({ bookings }: { bookings: PlayerBooking[] }) {
+function BookingsTable({ bookings, canCancel }: BookingsTableProps) {
   return (
     <div className="overflow-x-auto rounded-xl border border-slate-200 bg-white">
       <table className="w-full text-left">
@@ -88,11 +103,16 @@ function BookingsTable({ bookings }: { bookings: PlayerBooking[] }) {
             <th className={`${CELL_CLASS_NAME} font-medium`}>Court</th>
             <th className={`${CELL_CLASS_NAME} font-medium`}>Price</th>
             <th className={`${CELL_CLASS_NAME} font-medium`}>Status</th>
+            {canCancel && (
+              <th className={CELL_CLASS_NAME}>
+                <span className="sr-only">Actions</span>
+              </th>
+            )}
           </tr>
         </thead>
         <tbody className="divide-y divide-slate-100">
           {bookings.map((booking) => (
-            <BookingRow key={booking.id} booking={booking} />
+            <BookingRow key={booking.id} booking={booking} canCancel={canCancel} />
           ))}
         </tbody>
       </table>
@@ -100,8 +120,9 @@ function BookingsTable({ bookings }: { bookings: PlayerBooking[] }) {
   );
 }
 
-function BookingRow({ booking }: { booking: PlayerBooking }) {
-  const statusStyle = BOOKING_STATUS_STYLES[readBookingStatus(booking)];
+function BookingRow({ booking, canCancel }: BookingRowProps) {
+  const status = readBookingStatus(booking);
+  const statusStyle = BOOKING_STATUS_STYLES[status];
 
   return (
     <tr className={statusStyle.rowClassName}>
@@ -118,6 +139,11 @@ function BookingRow({ booking }: { booking: PlayerBooking }) {
           {statusStyle.label}
         </span>
       </td>
+      {canCancel && (
+        <td className={`${CELL_CLASS_NAME} text-right`}>
+          {status === "booked" && <CancelBookingButton bookingId={booking.id} />}
+        </td>
+      )}
     </tr>
   );
 }
