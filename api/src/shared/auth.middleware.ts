@@ -1,8 +1,9 @@
 import { parseCookie } from "cookie";
 import type { NextFunction, Request, Response } from "express";
+import type { UserRole } from "@db/db.generated.ts";
 import type { AuthenticatedUser } from "@modules/auth/auth.repository.ts";
 import { findAuthenticatedUser, SESSION_CONFIG } from "@modules/auth/auth.service.ts";
-import { UnauthorizedError } from "@shared/errors.ts";
+import { ForbiddenError, UnauthorizedError } from "@shared/errors.ts";
 
 export type AuthenticatedLocals = {
   authenticatedUser: AuthenticatedUser;
@@ -16,4 +17,12 @@ export async function requireAuth(req: Request, res: Response<unknown, Authentic
 
   res.locals.authenticatedUser = authenticatedUser;
   next();
+}
+
+export function requireRole(requiredRole: UserRole) {
+  return (req: Request, res: Response<unknown, AuthenticatedLocals>, next: NextFunction) => {
+    if (res.locals.authenticatedUser.role !== requiredRole) throw new ForbiddenError("Access denied");
+
+    next();
+  };
 }

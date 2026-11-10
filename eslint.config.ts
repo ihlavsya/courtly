@@ -25,6 +25,10 @@ export default defineConfig(globalIgnores(["dist/", "**/*.generated.ts"]), {
       "error",
       { allow: [{ from: "package", name: "Redirect", package: "@tanstack/router-core" }] },
     ],
+    "@typescript-eslint/no-floating-promises": [
+      "error",
+      { allowForKnownSafeCalls: [{ from: "package", name: ["describe", "it"], package: "node:test" }] },
+    ],
     eqeqeq: "error",
     "no-param-reassign": "error",
     "@typescript-eslint/no-unused-vars": "warn",

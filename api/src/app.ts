@@ -1,5 +1,6 @@
 import express from "express";
 import { authRouter } from "@modules/auth/index.ts";
+import { bookingsRouter } from "@modules/bookings/index.ts";
 import { env } from "@shared/env.ts";
 import { handleError } from "@shared/errors.ts";
 
@@ -8,6 +9,7 @@ const app = express();
 app.disable("x-powered-by");
 app.use(express.json());
 app.use("/auth", authRouter);
+app.use("/bookings", bookingsRouter);
 app.use(handleError);
 
 app.listen(env.PORT, (error) => {

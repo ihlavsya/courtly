@@ -7,9 +7,28 @@ const clientErrorSchema = z.object({
   message: z.string(),
 });
 
-export class UnauthorizedError extends Error {
-  readonly status = 401;
+class ClientError extends Error {
   readonly expose = true;
+}
+
+export class UnauthorizedError extends ClientError {
+  readonly status = 401;
+}
+
+export class ForbiddenError extends ClientError {
+  readonly status = 403;
+}
+
+export class NotFoundError extends ClientError {
+  readonly status = 404;
+}
+
+export class ConflictError extends ClientError {
+  readonly status = 409;
+}
+
+export class UnprocessableEntityError extends ClientError {
+  readonly status = 422;
 }
 
 export function handleError(error: unknown, req: Request, res: Response, next: NextFunction) {
