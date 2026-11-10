@@ -5,6 +5,7 @@ import { queryClient } from "./api/client.ts";
 import { AppLayout } from "./AppLayout.tsx";
 import { CourtsPage } from "./CourtsPage.tsx";
 import { LoginPage } from "./LoginPage.tsx";
+import { MyBookingsPage } from "./MyBookingsPage.tsx";
 import { NewBookingPage } from "./NewBookingPage.tsx";
 
 declare module "@tanstack/react-router" {
@@ -53,6 +54,12 @@ const newBookingRoute = createRoute({
   component: NewBookingPage,
 });
 
+const myBookingsRoute = createRoute({
+  getParentRoute: () => playerRoute,
+  path: "/bookings",
+  component: MyBookingsPage,
+});
+
 const courtsRoute = createRoute({
   getParentRoute: () => adminRoute,
   path: "/courts",
@@ -63,7 +70,7 @@ export const router = createRouter({
   routeTree: rootRoute.addChildren([
     homeRoute,
     loginRoute,
-    playerRoute.addChildren([newBookingRoute]),
+    playerRoute.addChildren([newBookingRoute, myBookingsRoute]),
     adminRoute.addChildren([courtsRoute]),
   ]),
 });

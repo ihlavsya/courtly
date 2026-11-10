@@ -8,7 +8,7 @@ type MenuItem = {
 };
 
 const MENU_ITEMS_BY_ROLE: Record<UserRole, MenuItem[]> = {
-  player: [{ label: "Book a court", path: "/bookings/new" }, { label: "My bookings" }],
+  player: [{ label: "Book a court", path: "/bookings/new" }, { label: "My bookings", path: "/bookings" }],
   admin: [{ label: "Courts", path: "/courts" }],
 };
 
