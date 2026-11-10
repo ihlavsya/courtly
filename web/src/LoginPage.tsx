@@ -1,8 +1,9 @@
 import { useNavigate } from "@tanstack/react-router";
 import type { SubmitEvent } from "react";
 import { useState } from "react";
-import type { LoginCredentials } from "./api.ts";
-import { ApiError, useLogIn } from "./api.ts";
+import type { LoginCredentials } from "./api/auth.ts";
+import { useLogIn } from "./api/auth.ts";
+import { ApiError } from "./api/client.ts";
 
 const EMPTY_CREDENTIALS: LoginCredentials = { email: "", password: "" };
 const FIRST_SERVER_ERROR_STATUS = 500;

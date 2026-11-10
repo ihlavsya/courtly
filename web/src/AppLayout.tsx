@@ -1,6 +1,6 @@
 import type { LinkProps } from "@tanstack/react-router";
 import { Link, Outlet } from "@tanstack/react-router";
-import type { UserRole } from "./api.ts";
+import type { UserRole } from "./api/auth.ts";
 
 type MenuItem = {
   label: string;

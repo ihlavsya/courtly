@@ -2,7 +2,7 @@ import { QueryClientProvider } from "@tanstack/react-query";
 import { RouterProvider } from "@tanstack/react-router";
 import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
-import { queryClient } from "./api.ts";
+import { queryClient } from "./api/client.ts";
 import { router } from "./router.tsx";
 import "./index.css";
 

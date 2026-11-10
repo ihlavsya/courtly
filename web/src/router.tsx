@@ -1,6 +1,7 @@
 import { createRootRoute, createRoute, createRouter, Outlet, redirect } from "@tanstack/react-router";
-import type { UserRole } from "./api.ts";
-import { currentSessionQueryOptions, queryClient } from "./api.ts";
+import type { UserRole } from "./api/auth.ts";
+import { currentSessionQueryOptions } from "./api/auth.ts";
+import { queryClient } from "./api/client.ts";
 import { AppLayout } from "./AppLayout.tsx";
 import { CourtsPage } from "./CourtsPage.tsx";
 import { LoginPage } from "./LoginPage.tsx";

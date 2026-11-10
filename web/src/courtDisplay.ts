@@ -1,0 +1,74 @@
+import type { TimeRange } from "./api/bookings.ts";
+import type { SportType } from "./api/courts.ts";
+
+export type BookingDay = {
+  date: string;
+  label: string;
+};
+
+const COURT_TIME_ZONE = "Europe/Lisbon";
+const MS_PER_DAY = 24 * 60 * 60 * 1000;
+const CENTS_PER_EURO = 100;
+const ISO_DATE_LENGTH = "2026-01-01".length;
+
+const COURT_DATE_FORMAT = new Intl.DateTimeFormat("sv-SE", { timeZone: COURT_TIME_ZONE, dateStyle: "short" });
+const DAY_CHIP_FORMAT = new Intl.DateTimeFormat("en-GB", { timeZone: "UTC", weekday: "short", day: "numeric" });
+const COURT_HOUR_FORMAT = new Intl.DateTimeFormat("en-GB", {
+  timeZone: COURT_TIME_ZONE,
+  hour: "2-digit",
+  minute: "2-digit",
+});
+const BOOKING_DAY_FORMAT = new Intl.DateTimeFormat("en-GB", {
+  timeZone: COURT_TIME_ZONE,
+  weekday: "short",
+  day: "numeric",
+  month: "short",
+});
+const PRICE_FORMAT = new Intl.NumberFormat("en-IE", {
+  style: "currency",
+  currency: "EUR",
+  trailingZeroDisplay: "stripIfInteger",
+});
+
+export const SPORT_EMOJIS: Record<SportType, string> = {
+  tennis: "🎾",
+  padel: "🏓",
+  squash: "🥎",
+  badminton: "🏸",
+  pickleball: "🥒",
+};
+
+export function listBookingDays(now: Date, dayCount: number): BookingDay[] {
+  const todayAsUtcMs = new Date(`${readCourtDate(now)}T00:00:00Z`).getTime();
+
+  return Array.from(Array(dayCount).keys(), (dayIndex) =>
+    buildBookingDay(new Date(todayAsUtcMs + dayIndex * MS_PER_DAY), dayIndex),
+  );
+}
+
+export function readCourtDate(instant: Date) {
+  return COURT_DATE_FORMAT.format(instant);
+}
+
+export function formatCourtHour(instant: string) {
+  return COURT_HOUR_FORMAT.format(new Date(instant));
+}
+
+export function formatHourRange({ startsAt, endsAt }: TimeRange) {
+  return `${formatCourtHour(startsAt)}–${formatCourtHour(endsAt)}`;
+}
+
+export function formatBookingTime(timeRange: TimeRange) {
+  return `${BOOKING_DAY_FORMAT.format(new Date(timeRange.startsAt))}, ${formatHourRange(timeRange)}`;
+}
+
+export function formatPrice(cents: number) {
+  return PRICE_FORMAT.format(cents / CENTS_PER_EURO);
+}
+
+function buildBookingDay(dayAsUtc: Date, dayIndex: number): BookingDay {
+  return {
+    date: dayAsUtc.toISOString().slice(0, ISO_DATE_LENGTH),
+    label: dayIndex === 0 ? "Today" : DAY_CHIP_FORMAT.format(dayAsUtc),
+  };
+}
