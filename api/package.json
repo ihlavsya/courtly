@@ -3,13 +3,13 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "dev": "tsx watch --env-file=.env src/app.ts",
-    "start": "tsx --env-file=.env src/app.ts",
+    "dev": "tsx watch --env-file-if-exists=.env src/app.ts",
+    "start": "tsx --env-file-if-exists=.env src/app.ts",
     "typecheck": "tsc --noEmit",
     "test": "tsx --test \"src/**/*.test.ts\"",
     "db:migrate": "node-pg-migrate up",
     "db:codegen": "kysely-codegen --dialect postgres --camel-case --out-file src/db/db.generated.ts",
-    "db:seed": "tsx --env-file=.env src/db/seed.ts"
+    "db:seed": "tsx --env-file-if-exists=.env src/db/seed.ts"
   },
   "devDependencies": {
     "@types/express": "^5.0.6",

@@ -1,3 +1,7 @@
+x-api-env: &api-env
+  DATABASE_URL: postgresql://courtly:courtly@postgres:5432/courtly
+  NODE_ENV: development
+
 services:
   postgres:
     image: postgres:18-alpine
@@ -16,6 +20,38 @@ services:
       interval: 5s
       timeout: 3s
       retries: 10
+
+  migrate:
+    build:
+      context: .
+      target: api
+    environment: *api-env
+    command: ["sh", "-c", "npm run db:migrate && npm run db:seed"]
+    depends_on:
+      postgres:
+        condition: service_healthy
+
+  api:
+    build:
+      context: .
+      target: api
+    restart: unless-stopped
+    environment:
+      <<: *api-env
+      PORT: 3000
+    depends_on:
+      migrate:
+        condition: service_completed_successfully
+
+  web:
+    build:
+      context: .
+      target: web
+    restart: unless-stopped
+    ports:
+      - "127.0.0.1:8080:80"
+    depends_on:
+      - api
 
 volumes:
   postgres-data:
