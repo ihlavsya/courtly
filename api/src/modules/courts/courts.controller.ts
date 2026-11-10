@@ -1,7 +1,12 @@
 import type { Request, Response } from "express";
 import { listActiveCourts, listAdminCourts } from "@modules/courts/courts.repository.ts";
-import { courtDetailsSchema, courtIdParamsSchema, newCourtSchema } from "@modules/courts/courts.schema.ts";
-import { createCourt, editCourtDetails, getAdminCourt } from "@modules/courts/courts.service.ts";
+import {
+  courtDetailsSchema,
+  courtIdParamsSchema,
+  courtStatusSchema,
+  newCourtSchema,
+} from "@modules/courts/courts.schema.ts";
+import { changeCourtStatus, createCourt, editCourtDetails, getAdminCourt } from "@modules/courts/courts.service.ts";
 
 export async function handleListActiveCourts(req: Request, res: Response) {
   const courts = await listActiveCourts();
@@ -33,6 +38,14 @@ export async function handleEditCourtDetails(req: Request, res: Response) {
   const { courtId } = courtIdParamsSchema.parse(req.params);
   const details = courtDetailsSchema.parse(req.body);
   const court = await editCourtDetails(courtId, details);
+
+  res.json({ court });
+}
+
+export async function handleChangeCourtStatus(req: Request, res: Response) {
+  const { courtId } = courtIdParamsSchema.parse(req.params);
+  const status = courtStatusSchema.parse(req.body);
+  const court = await changeCourtStatus(courtId, status);
 
   res.json({ court });
 }

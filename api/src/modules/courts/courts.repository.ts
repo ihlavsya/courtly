@@ -1,5 +1,5 @@
 import pg from "pg";
-import type { CourtDetails, NewCourt } from "@modules/courts/courts.schema.ts";
+import type { CourtDetails, CourtStatus, NewCourt } from "@modules/courts/courts.schema.ts";
 import { db } from "@shared/db.ts";
 
 const UNIQUE_VIOLATION_CODE = "23505";
@@ -62,6 +62,15 @@ export function updateCourtDetails(courtId: number, details: CourtDetails) {
   return db
     .updateTable("courts")
     .set(details)
+    .where("courts.id", "=", courtId)
+    .returning(ADMIN_COURT_COLUMNS)
+    .executeTakeFirst();
+}
+
+export function updateCourtStatus(courtId: number, status: CourtStatus) {
+  return db
+    .updateTable("courts")
+    .set(status)
     .where("courts.id", "=", courtId)
     .returning(ADMIN_COURT_COLUMNS)
     .executeTakeFirst();

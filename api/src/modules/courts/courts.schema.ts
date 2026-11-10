@@ -21,10 +21,16 @@ export const newCourtSchema = courtDetailsSchema.extend({
   sportType: z.enum(SPORT_TYPES),
 });
 
+export const courtStatusSchema = z.object({
+  isActive: z.boolean(),
+});
+
 export const courtIdParamsSchema = z.object({
   courtId: z.coerce.number().pipe(z.int32().positive()),
 });
 
 export type CourtDetails = z.infer<typeof courtDetailsSchema>;
+
+export type CourtStatus = z.infer<typeof courtStatusSchema>;
 
 export type NewCourt = z.infer<typeof newCourtSchema>;

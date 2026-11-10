@@ -18,9 +18,16 @@ export type CourtDetails = Pick<Court, "name" | "hourlyPriceCents">;
 
 export type NewCourt = CourtDetails & Pick<Court, "sportType">;
 
+export type CourtStatus = Pick<AdminCourt, "isActive">;
+
 type CourtDetailsEdit = {
   courtId: number;
   details: CourtDetails;
+};
+
+type CourtStatusChange = {
+  courtId: number;
+  status: CourtStatus;
 };
 
 export const COURT_NAME_MAX_LENGTH = 100;
@@ -61,6 +68,13 @@ export function useEditCourtDetails() {
   });
 }
 
+export function useChangeCourtStatus() {
+  return useMutation({
+    mutationFn: changeCourtStatus,
+    onSuccess: invalidateAdminCourts,
+  });
+}
+
 async function fetchActiveCourts() {
   const { courts } = await requestJson<{ courts: Court[] }>("/courts");
 
@@ -87,6 +101,12 @@ async function createCourt(newCourt: NewCourt) {
 
 async function editCourtDetails({ courtId, details }: CourtDetailsEdit) {
   const { court } = await patchJson<{ court: AdminCourt }>(`${ADMIN_COURTS_PATH}/${String(courtId)}`, details);
+
+  return court;
+}
+
+async function changeCourtStatus({ courtId, status }: CourtStatusChange) {
+  const { court } = await patchJson<{ court: AdminCourt }>(`${ADMIN_COURTS_PATH}/${String(courtId)}/status`, status);
 
   return court;
 }

@@ -1,5 +1,6 @@
 import { Router } from "express";
 import {
+  handleChangeCourtStatus,
   handleCreateCourt,
   handleEditCourtDetails,
   handleGetAdminCourt,
@@ -22,3 +23,4 @@ adminCourtsRouter.get("/", handleListAdminCourts);
 adminCourtsRouter.get("/:courtId", handleGetAdminCourt);
 adminCourtsRouter.post("/", handleCreateCourt);
 adminCourtsRouter.patch("/:courtId", handleEditCourtDetails);
+adminCourtsRouter.patch("/:courtId/status", handleChangeCourtStatus);

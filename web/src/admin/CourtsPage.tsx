@@ -1,12 +1,31 @@
 import { useQuery } from "@tanstack/react-query";
 import { Link } from "@tanstack/react-router";
-import type { AdminCourt } from "../api/courts.ts";
-import { adminCourtsQueryOptions } from "../api/courts.ts";
+import { readErrorMessage } from "../api/client.ts";
+import type { AdminCourt, CourtStatus } from "../api/courts.ts";
+import { adminCourtsQueryOptions, useChangeCourtStatus } from "../api/courts.ts";
 import { formatPrice } from "../shared/money.ts";
 import { SPORT_EMOJIS } from "../shared/sports.ts";
 import { BADGE_CLASS_NAME, TABLE_CELL_CLASS_NAME } from "../shared/styles.ts";
 
+type StatusChangeAction = {
+  label: string;
+  pendingLabel: string;
+  nextStatus: CourtStatus;
+};
+
 const ACTION_CLASS_NAME = "rounded-md border border-slate-300 px-3 py-1 text-sm font-medium text-slate-700 hover:bg-slate-50";
+
+const DEACTIVATE_ACTION: StatusChangeAction = {
+  label: "Deactivate",
+  pendingLabel: "Deactivating...",
+  nextStatus: { isActive: false },
+};
+
+const REACTIVATE_ACTION: StatusChangeAction = {
+  label: "Reactivate",
+  pendingLabel: "Reactivating...",
+  nextStatus: { isActive: true },
+};
 
 export function CourtsPage() {
   const courtsQuery = useQuery(adminCourtsQueryOptions);
@@ -80,7 +99,33 @@ function CourtRow({ court }: { court: AdminCourt }) {
         <Link to="/courts/$courtId/edit" params={{ courtId: court.id }} className={ACTION_CLASS_NAME}>
           Edit details
         </Link>
+        <CourtStatusButton court={court} />
       </td>
     </tr>
+  );
+}
+
+function CourtStatusButton({ court }: { court: AdminCourt }) {
+  const changeCourtStatus = useChangeCourtStatus();
+  const action = court.isActive ? DEACTIVATE_ACTION : REACTIVATE_ACTION;
+
+  return (
+    <>
+      <button
+        type="button"
+        disabled={changeCourtStatus.isPending}
+        onClick={() => {
+          changeCourtStatus.mutate({ courtId: court.id, status: action.nextStatus });
+        }}
+        className={`${ACTION_CLASS_NAME} disabled:opacity-50`}
+      >
+        {changeCourtStatus.isPending ? action.pendingLabel : action.label}
+      </button>
+      {changeCourtStatus.isError && (
+        <span role="alert" className="text-sm text-red-600">
+          {readErrorMessage(changeCourtStatus.error)}
+        </span>
+      )}
+    </>
   );
 }

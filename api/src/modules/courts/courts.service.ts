@@ -3,18 +3,13 @@ import {
   findAdminCourt,
   insertCourt,
   updateCourtDetails,
+  updateCourtStatus,
 } from "@modules/courts/courts.repository.ts";
-import type { CourtDetails, NewCourt } from "@modules/courts/courts.schema.ts";
+import type { CourtDetails, CourtStatus, NewCourt } from "@modules/courts/courts.schema.ts";
 import { ConflictError, NotFoundError } from "@shared/errors.ts";
 
-const COURT_NOT_FOUND_MESSAGE = "Court not found";
-
 export async function getAdminCourt(courtId: number) {
-  const court = await findAdminCourt(courtId);
-
-  if (court === undefined) throw new NotFoundError(COURT_NOT_FOUND_MESSAGE);
-
-  return court;
+  return requireFoundCourt(await findAdminCourt(courtId));
 }
 
 export function createCourt(newCourt: NewCourt) {
@@ -22,9 +17,15 @@ export function createCourt(newCourt: NewCourt) {
 }
 
 export async function editCourtDetails(courtId: number, details: CourtDetails) {
-  const court = await rejectTakenCourtName(() => updateCourtDetails(courtId, details));
+  return requireFoundCourt(await rejectTakenCourtName(() => updateCourtDetails(courtId, details)));
+}
 
-  if (court === undefined) throw new NotFoundError(COURT_NOT_FOUND_MESSAGE);
+export async function changeCourtStatus(courtId: number, status: CourtStatus) {
+  return requireFoundCourt(await updateCourtStatus(courtId, status));
+}
+
+function requireFoundCourt<FoundCourt>(court: FoundCourt | undefined) {
+  if (court === undefined) throw new NotFoundError("Court not found");
 
   return court;
 }
