@@ -2,14 +2,20 @@ import {
   ALREADY_CANCELLED_MESSAGE,
   assertBookingCanBeCancelled,
   buildBookableSlot,
+  buildOpenHoursRange,
+  listFreeSlots,
 } from "@modules/bookings/bookings.policy.ts";
 import {
   findBookingOfUser,
   insertBooking,
+  listBookedSlotsOfCourt,
   listBookingsOfUser,
   markBookingCancelled,
 } from "@modules/bookings/bookings.repository.ts";
-import type { CreateBookingRequest } from "@modules/bookings/bookings.schema.ts";
+import type {
+  AvailabilityQuery,
+  CreateBookingRequest,
+} from "@modules/bookings/bookings.schema.ts";
 import { findActiveCourt } from "@modules/courts/index.ts";
 import { ConflictError, NotFoundError } from "@shared/errors.ts";
 
@@ -59,6 +65,25 @@ export async function listMyBookings(userId: string) {
   const bookings = await listBookingsOfUser(userId);
 
   return splitBookingsByTime(bookings, new Date());
+}
+
+export async function listFreeSlotsOfCourt({
+  courtId,
+  date,
+}: AvailabilityQuery) {
+  const court = await findActiveCourt(courtId);
+
+  if (court === undefined) throw new NotFoundError("active court not found");
+
+  const bookedSlots = await listBookedSlotsOfCourt(
+    court.id,
+    buildOpenHoursRange(date, court),
+  );
+
+  return listFreeSlots(
+    { date, bookedSlots },
+    { courtHours: court, now: new Date() },
+  );
 }
 
 function splitBookingsByTime<SortedBooking extends { endsAt: Date }>(

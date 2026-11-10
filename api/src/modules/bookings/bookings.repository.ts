@@ -1,5 +1,5 @@
 import { sql } from "kysely";
-import type { BookingSlot } from "@modules/bookings/bookings.policy.ts";
+import type { BookingSlot, TimeRange } from "@modules/bookings/bookings.policy.ts";
 import { db } from "@shared/db.ts";
 
 type NewBooking = {
@@ -44,6 +44,16 @@ export function markBookingCancelled(bookingId: string, cancelledAt: Date) {
     .where("bookings.cancelledAt", "is", null)
     .returning(BOOKING_COLUMNS)
     .executeTakeFirst();
+}
+
+export function listBookedSlotsOfCourt(courtId: number, openHours: TimeRange): Promise<BookingSlot[]> {
+  return db
+    .selectFrom("bookings")
+    .select([sql<Date>`lower(bookings.time_slot)`.as("startsAt"), sql<Date>`upper(bookings.time_slot)`.as("endsAt")])
+    .where("bookings.courtId", "=", courtId)
+    .where("bookings.cancelledAt", "is", null)
+    .where(sql<boolean>`bookings.time_slot && tstzrange(${openHours.startsAt}, ${openHours.endsAt}, '[)')`)
+    .execute();
 }
 
 export function listBookingsOfUser(userId: string) {

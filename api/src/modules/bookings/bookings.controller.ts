@@ -1,6 +1,15 @@
 import type { Request, Response } from "express";
-import { bookingIdParamsSchema, createBookingRequestSchema } from "@modules/bookings/bookings.schema.ts";
-import { cancelBooking, createBooking, listMyBookings } from "@modules/bookings/bookings.service.ts";
+import {
+  availabilityQuerySchema,
+  bookingIdParamsSchema,
+  createBookingRequestSchema,
+} from "@modules/bookings/bookings.schema.ts";
+import {
+  cancelBooking,
+  createBooking,
+  listFreeSlotsOfCourt,
+  listMyBookings,
+} from "@modules/bookings/bookings.service.ts";
 import type { AuthenticatedLocals } from "@modules/auth/index.ts";
 
 export async function handleCreateBooking(req: Request, res: Response<unknown, AuthenticatedLocals>) {
@@ -21,4 +30,11 @@ export async function handleListMyBookings(req: Request, res: Response<unknown, 
   const { upcoming, past } = await listMyBookings(res.locals.authenticatedUser.id);
 
   res.json({ upcoming, past });
+}
+
+export async function handleListFreeSlots(req: Request, res: Response) {
+  const availabilityQuery = availabilityQuerySchema.parse(req.query);
+  const freeSlots = await listFreeSlotsOfCourt(availabilityQuery);
+
+  res.json({ freeSlots });
 }
