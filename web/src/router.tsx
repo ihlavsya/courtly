@@ -5,9 +5,11 @@ import { queryClient } from "./api/client.ts";
 import { AppLayout } from "./AppLayout.tsx";
 import { CourtsPage } from "./CourtsPage.tsx";
 import { DayReportPage } from "./DayReportPage.tsx";
+import { EditCourtPage } from "./EditCourtPage.tsx";
 import { LoginPage } from "./LoginPage.tsx";
 import { MyBookingsPage } from "./MyBookingsPage.tsx";
 import { NewBookingPage } from "./NewBookingPage.tsx";
+import { NewCourtPage } from "./NewCourtPage.tsx";
 
 declare module "@tanstack/react-router" {
   interface Register {
@@ -67,6 +69,26 @@ const courtsRoute = createRoute({
   component: CourtsPage,
 });
 
+const newCourtRoute = createRoute({
+  getParentRoute: () => adminRoute,
+  path: "/courts/new",
+  component: NewCourtPage,
+});
+
+const editCourtRoute = createRoute({
+  getParentRoute: () => adminRoute,
+  path: "/courts/$courtId/edit",
+  params: {
+    parse: ({ courtId }) => ({ courtId: Number(courtId) }),
+    stringify: ({ courtId }) => ({ courtId: String(courtId) }),
+  },
+  component: function EditCourtRoute() {
+    const { courtId } = editCourtRoute.useParams();
+
+    return <EditCourtPage courtId={courtId} />;
+  },
+});
+
 const dayReportRoute = createRoute({
   getParentRoute: () => adminRoute,
   path: "/day-bookings",
@@ -78,7 +100,7 @@ export const router = createRouter({
     homeRoute,
     loginRoute,
     playerRoute.addChildren([newBookingRoute, myBookingsRoute]),
-    adminRoute.addChildren([courtsRoute, dayReportRoute]),
+    adminRoute.addChildren([courtsRoute, newCourtRoute, editCourtRoute, dayReportRoute]),
   ]),
 });
 

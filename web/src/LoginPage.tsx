@@ -4,10 +4,10 @@ import { useState } from "react";
 import type { LoginCredentials } from "./api/auth.ts";
 import { useLogIn } from "./api/auth.ts";
 import { ApiError } from "./api/client.ts";
+import { INPUT_CLASS_NAME } from "./formStyles.ts";
 
 const EMPTY_CREDENTIALS: LoginCredentials = { email: "", password: "" };
 const FIRST_SERVER_ERROR_STATUS = 500;
-const INPUT_CLASS_NAME = "w-full rounded-md border border-slate-300 px-3 py-2 focus:outline-2 focus:outline-emerald-600";
 
 export function LoginPage() {
   const logIn = useLogIn();

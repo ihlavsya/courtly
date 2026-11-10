@@ -9,6 +9,7 @@ export type BookingDay = {
 const COURT_TIME_ZONE = "Europe/Lisbon";
 const MS_PER_DAY = 24 * 60 * 60 * 1000;
 const CENTS_PER_EURO = 100;
+const EURO_DECIMAL_PLACES = 2;
 const ISO_DATE_LENGTH = "2026-01-01".length;
 
 const COURT_DATE_FORMAT = new Intl.DateTimeFormat("sv-SE", { timeZone: COURT_TIME_ZONE, dateStyle: "short" });
@@ -37,6 +38,16 @@ export const SPORT_EMOJIS: Record<SportType, string> = {
   badminton: "🏸",
   pickleball: "🥒",
 };
+
+export const SPORT_LABELS: Record<SportType, string> = {
+  tennis: "Tennis",
+  padel: "Padel",
+  squash: "Squash",
+  badminton: "Badminton",
+  pickleball: "Pickleball",
+};
+
+export const SPORT_TYPES = Object.keys(SPORT_LABELS) as SportType[];
 
 export function listBookingDays(now: Date, dayCount: number): BookingDay[] {
   const todayAsUtcMs = new Date(`${readCourtDate(now)}T00:00:00Z`).getTime();
@@ -70,6 +81,14 @@ export function formatBookingTime(timeRange: TimeRange) {
 
 export function formatPrice(cents: number) {
   return PRICE_FORMAT.format(cents / CENTS_PER_EURO);
+}
+
+export function formatEurosInput(cents: number) {
+  return (cents / CENTS_PER_EURO).toFixed(EURO_DECIMAL_PLACES);
+}
+
+export function parseEurosToCents(eurosInput: string) {
+  return Math.round(Number(eurosInput) * CENTS_PER_EURO);
 }
 
 function buildBookingDay(dayAsUtc: Date, dayIndex: number): BookingDay {

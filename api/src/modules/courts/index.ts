@@ -1,2 +1,2 @@
 export { findActiveCourt, listCourts } from "@modules/courts/courts.repository.ts";
-export { courtsRouter } from "@modules/courts/courts.routes.ts";
+export { adminCourtsRouter, courtsRouter } from "@modules/courts/courts.routes.ts";

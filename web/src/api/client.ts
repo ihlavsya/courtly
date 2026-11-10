@@ -29,17 +29,25 @@ export async function requestJson<ResponseBody>(path: string, init?: RequestInit
 }
 
 export function postJson<ResponseBody>(path: string, body: unknown) {
-  return requestJson<ResponseBody>(path, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(body),
-  });
+  return sendJson<ResponseBody>("POST", path, body);
+}
+
+export function patchJson<ResponseBody>(path: string, body: unknown) {
+  return sendJson<ResponseBody>("PATCH", path, body);
 }
 
 export function readErrorMessage(error: Error) {
   if (error instanceof ApiError && error.serverMessage !== undefined) return error.serverMessage;
 
   return FALLBACK_ERROR_MESSAGE;
+}
+
+function sendJson<ResponseBody>(method: "POST" | "PATCH", path: string, body: unknown) {
+  return requestJson<ResponseBody>(path, {
+    method,
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(body),
+  });
 }
 
 async function readServerMessage(response: Response) {
