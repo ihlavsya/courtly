@@ -35,21 +35,21 @@ try {
 }
 
 async function seedDemoUsers() {
-  const rows = await Promise.all(DEMO_USERS.map(buildUserRow));
+  if (!(await checkIsTableEmpty("users"))) return;
 
-  await db
-    .insertInto("users")
-    .values(rows)
-    .onConflict((conflict) => conflict.column("email").doNothing())
-    .execute();
+  const rows = await Promise.all(DEMO_USERS.map(buildUserRow));
+  await db.insertInto("users").values(rows).execute();
 }
 
 async function seedDemoCourts() {
-  await db
-    .insertInto("courts")
-    .values(DEMO_COURTS)
-    .onConflict((conflict) => conflict.doNothing())
-    .execute();
+  if (!(await checkIsTableEmpty("courts"))) return;
+
+  await db.insertInto("courts").values(DEMO_COURTS).execute();
+}
+
+async function checkIsTableEmpty(table: "users" | "courts") {
+  const firstRow = await db.selectFrom(table).select("id").limit(1).executeTakeFirst();
+  return firstRow === undefined;
 }
 
 async function buildUserRow(demoUser: DemoUser) {

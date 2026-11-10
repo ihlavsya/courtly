@@ -7,6 +7,7 @@ RUN npm ci
 
 FROM deps AS api
 COPY api api
+RUN npm run typecheck --workspace api
 WORKDIR /app/api
 EXPOSE 3000
 CMD ["npm", "start"]
