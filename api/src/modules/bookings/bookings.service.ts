@@ -3,7 +3,7 @@ import {
   assertBookingCanBeCancelled,
   buildBookableSlot,
   buildOpenHoursRange,
-  listFreeSlots,
+  listCourtDaySlots,
 } from "@modules/bookings/bookings.policy.ts";
 import {
   findBookingOfUser,
@@ -67,7 +67,7 @@ export async function listMyBookings(userId: string) {
   return splitBookingsByTime(bookings, new Date());
 }
 
-export async function listFreeSlotsOfCourt({
+export async function listSlotsOfCourt({
   courtId,
   date,
 }: AvailabilityQuery) {
@@ -80,7 +80,7 @@ export async function listFreeSlotsOfCourt({
     buildOpenHoursRange(date, court),
   );
 
-  return listFreeSlots(
+  return listCourtDaySlots(
     { date, bookedSlots },
     { courtHours: court, now: new Date() },
   );

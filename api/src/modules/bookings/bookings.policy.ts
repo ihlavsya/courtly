@@ -9,10 +9,18 @@ export type TimeRange = {
 
 export type BookingSlot = TimeRange;
 
+export type SlotStatus = "free" | "booked" | "past";
+
+export type CourtSlot = TimeRange & {
+  status: SlotStatus;
+};
+
 type CourtDay = {
   date: string;
   bookedSlots: BookingSlot[];
 };
+
+type StatusContext = Pick<CourtDay, "bookedSlots"> & Pick<SlotContext, "now">;
 
 type BookingTimeRequest = {
   startsAt: Date;
@@ -32,7 +40,7 @@ type CancellableBooking = {
 };
 
 const MS_PER_HOUR = 60 * 60 * 1000;
-const FREE_SLOT_MS = 1 * MS_PER_HOUR;
+const SLOT_MS = 1 * MS_PER_HOUR;
 const CANCELLATION_CUTOFF_HOURS = 2;
 const HOURS_MINUTES_LENGTH = "08:00".length;
 
@@ -64,13 +72,14 @@ export function buildBookableSlot(
   return slot;
 }
 
-export function listFreeSlots(
+export function listCourtDaySlots(
   { date, bookedSlots }: CourtDay,
   { courtHours, now }: SlotContext,
-): BookingSlot[] {
-  return listOpeningSlots(date, courtHours)
-    .filter((slot) => slot.startsAt > now)
-    .filter((slot) => !checkIsBooked(slot, bookedSlots));
+): CourtSlot[] {
+  return listOpeningSlots(date, courtHours).map((slot) => ({
+    ...slot,
+    status: readSlotStatus(slot, { bookedSlots, now }),
+  }));
 }
 
 export function buildOpenHoursRange(
@@ -104,18 +113,28 @@ function listOpeningSlots(date: string, courtHours: CourtHours) {
   const opening = buildOpenHoursRange(date, courtHours);
   const openingMs = opening.startsAt.getTime();
   const closingMs = opening.endsAt.getTime();
-  const slotCount = Math.floor((closingMs - openingMs) / FREE_SLOT_MS);
+  const slotCount = Math.floor((closingMs - openingMs) / SLOT_MS);
 
   return Array.from(Array(slotCount).keys(), (slotIndex) =>
-    buildFreeSlot(openingMs + slotIndex * FREE_SLOT_MS),
+    buildOpeningSlot(openingMs + slotIndex * SLOT_MS),
   );
 }
 
-function buildFreeSlot(startsAtMs: number) {
+function buildOpeningSlot(startsAtMs: number) {
   return {
     startsAt: new Date(startsAtMs),
-    endsAt: new Date(startsAtMs + FREE_SLOT_MS),
+    endsAt: new Date(startsAtMs + SLOT_MS),
   };
+}
+
+function readSlotStatus(
+  slot: TimeRange,
+  { bookedSlots, now }: StatusContext,
+): SlotStatus {
+  if (slot.startsAt <= now) return "past";
+  if (checkIsBooked(slot, bookedSlots)) return "booked";
+
+  return "free";
 }
 
 function checkIsBooked(slot: BookingSlot, bookedSlots: BookingSlot[]) {

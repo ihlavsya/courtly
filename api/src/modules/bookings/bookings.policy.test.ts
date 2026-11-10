@@ -4,12 +4,18 @@ import {
   ALREADY_CANCELLED_MESSAGE,
   assertBookingCanBeCancelled,
   type BookingSlot,
-  listFreeSlots,
+  listCourtDaySlots,
+  type SlotStatus,
 } from "@modules/bookings/bookings.policy.ts";
 
-type FreeStartsOptions = {
+type SlotSummaryOptions = {
   bookedSlots?: BookingSlot[];
   now?: Date;
+};
+
+type SlotSummary = {
+  startsAt: string;
+  status: SlotStatus;
 };
 
 const BOOKING_START = new Date("2026-11-10T12:00:00.000Z");
@@ -17,6 +23,10 @@ const ACTIVE_BOOKING = { startsAt: BOOKING_START, cancelledAt: null };
 const SLOT_CONTEXT = {
   courtHours: { opensAt: "08:00:00", closesAt: "23:00:00" },
   now: new Date("2026-01-01T00:00:00.000Z"),
+};
+const TWO_HOUR_BOOKING = {
+  startsAt: new Date("2026-11-12T10:00:00.000Z"),
+  endsAt: new Date("2026-11-12T12:00:00.000Z"),
 };
 const TOO_LATE_ERROR = {
   name: "Error",
@@ -58,33 +68,45 @@ describe("assertBookingCanBeCancelled", () => {
   });
 });
 
-describe("listFreeSlots", () => {
-  function listFreeStarts(date: string, { bookedSlots = [], now = SLOT_CONTEXT.now }: FreeStartsOptions = {}) {
-    return listFreeSlots({ date, bookedSlots }, { ...SLOT_CONTEXT, now }).map((slot) => slot.startsAt.toISOString());
+describe("listCourtDaySlots", () => {
+  function listSlotSummaries(date: string, { bookedSlots = [], now = SLOT_CONTEXT.now }: SlotSummaryOptions = {}) {
+    return listCourtDaySlots({ date, bookedSlots }, { ...SLOT_CONTEXT, now }).map(({ startsAt, status }) => ({
+      startsAt: startsAt.toISOString(),
+      status,
+    }));
   }
 
-  it("lists every opening hour of a winter day as a 1-hour slot", () => {
-    const freeSlots = listFreeSlots({ date: "2026-11-12", bookedSlots: [] }, SLOT_CONTEXT);
+  function findStatus(slots: SlotSummary[], startsAt: string) {
+    return slots.find((slot) => slot.startsAt === startsAt)?.status;
+  }
 
-    assert.equal(freeSlots.length, 15);
-    assert.deepEqual(freeSlots[0], {
+  it("lists every opening hour of a winter day as a free 1-hour slot", () => {
+    const slots = listCourtDaySlots({ date: "2026-11-12", bookedSlots: [] }, SLOT_CONTEXT);
+
+    assert.equal(slots.length, 15);
+    assert.deepEqual(slots[0], {
       startsAt: new Date("2026-11-12T08:00:00.000Z"),
       endsAt: new Date("2026-11-12T09:00:00.000Z"),
+      status: "free",
     });
-    assert.equal(freeSlots.at(-1)?.startsAt.toISOString(), "2026-11-12T22:00:00.000Z");
+    assert.equal(slots.at(-1)?.startsAt.toISOString(), "2026-11-12T22:00:00.000Z");
+    assert.ok(slots.every((slot) => slot.status === "free"));
   });
 
   it("uses Lisbon summer time, so 08:00 in Lisbon is 07:00 UTC", () => {
-    const freeStarts = listFreeStarts("2026-07-15");
+    const slots = listSlotSummaries("2026-07-15");
 
-    assert.equal(freeStarts.length, 15);
-    assert.equal(freeStarts[0], "2026-07-15T07:00:00.000Z");
-    assert.equal(freeStarts.at(-1), "2026-07-15T21:00:00.000Z");
+    assert.equal(slots.length, 15);
+    assert.equal(slots[0]?.startsAt, "2026-07-15T07:00:00.000Z");
+    assert.equal(slots.at(-1)?.startsAt, "2026-07-15T21:00:00.000Z");
   });
 
   it("keeps the opening hours on the days when the clocks change", () => {
     assert.deepEqual(
-      [listFreeStarts("2026-03-29"), listFreeStarts("2026-10-25")].map((starts) => [starts.length, starts[0]]),
+      [listSlotSummaries("2026-03-29"), listSlotSummaries("2026-10-25")].map((slots) => [
+        slots.length,
+        slots[0]?.startsAt,
+      ]),
       [
         [15, "2026-03-29T07:00:00.000Z"],
         [15, "2026-10-25T08:00:00.000Z"],
@@ -92,27 +114,38 @@ describe("listFreeSlots", () => {
     );
   });
 
-  it("removes every hour that a booking covers", () => {
-    const twoHourBooking = {
-      startsAt: new Date("2026-11-12T10:00:00.000Z"),
-      endsAt: new Date("2026-11-12T12:00:00.000Z"),
-    };
-    const freeStarts = listFreeStarts("2026-11-12", { bookedSlots: [twoHourBooking] });
+  it("marks every hour that a booking covers as booked", () => {
+    const slots = listSlotSummaries("2026-11-12", { bookedSlots: [TWO_HOUR_BOOKING] });
 
-    assert.equal(freeStarts.length, 13);
-    assert.ok(!freeStarts.includes("2026-11-12T10:00:00.000Z"));
-    assert.ok(!freeStarts.includes("2026-11-12T11:00:00.000Z"));
-    assert.ok(freeStarts.includes("2026-11-12T12:00:00.000Z"));
+    assert.equal(slots.length, 15);
+    assert.equal(findStatus(slots, "2026-11-12T09:00:00.000Z"), "free");
+    assert.equal(findStatus(slots, "2026-11-12T10:00:00.000Z"), "booked");
+    assert.equal(findStatus(slots, "2026-11-12T11:00:00.000Z"), "booked");
+    assert.equal(findStatus(slots, "2026-11-12T12:00:00.000Z"), "free");
   });
 
-  it("hides the hours of today that already started", () => {
-    const freeStarts = listFreeStarts("2026-11-12", { now: new Date("2026-11-12T14:30:00.000Z") });
+  it("marks the hours of today that already started as past", () => {
+    const slots = listSlotSummaries("2026-11-12", { now: new Date("2026-11-12T14:30:00.000Z") });
 
-    assert.equal(freeStarts[0], "2026-11-12T15:00:00.000Z");
-    assert.equal(freeStarts.length, 8);
+    assert.equal(slots.length, 15);
+    assert.equal(slots.filter((slot) => slot.status === "past").length, 7);
+    assert.equal(findStatus(slots, "2026-11-12T14:00:00.000Z"), "past");
+    assert.equal(findStatus(slots, "2026-11-12T15:00:00.000Z"), "free");
   });
 
-  it("returns no slots for a past day", () => {
-    assert.deepEqual(listFreeStarts("2025-12-31"), []);
+  it("marks a booked hour as past when it already started", () => {
+    const slots = listSlotSummaries("2026-11-12", {
+      bookedSlots: [TWO_HOUR_BOOKING],
+      now: new Date("2026-11-12T14:30:00.000Z"),
+    });
+
+    assert.equal(findStatus(slots, "2026-11-12T10:00:00.000Z"), "past");
+  });
+
+  it("marks every slot of a past day as past", () => {
+    const slots = listSlotSummaries("2025-12-31");
+
+    assert.equal(slots.length, 15);
+    assert.ok(slots.every((slot) => slot.status === "past"));
   });
 });

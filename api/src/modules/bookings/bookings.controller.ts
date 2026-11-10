@@ -7,8 +7,8 @@ import {
 import {
   cancelBooking,
   createBooking,
-  listFreeSlotsOfCourt,
   listMyBookings,
+  listSlotsOfCourt,
 } from "@modules/bookings/bookings.service.ts";
 import type { AuthenticatedLocals } from "@modules/auth/index.ts";
 
@@ -32,9 +32,9 @@ export async function handleListMyBookings(req: Request, res: Response<unknown, 
   res.json({ upcoming, past });
 }
 
-export async function handleListFreeSlots(req: Request, res: Response) {
+export async function handleListAvailability(req: Request, res: Response) {
   const availabilityQuery = availabilityQuerySchema.parse(req.query);
-  const freeSlots = await listFreeSlotsOfCourt(availabilityQuery);
+  const slots = await listSlotsOfCourt(availabilityQuery);
 
-  res.json({ freeSlots });
+  res.json({ slots });
 }
