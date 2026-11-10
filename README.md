@@ -24,7 +24,7 @@ I selected a relational database instead of MongoDB, because foreign keys make s
 
 ## How I prevent double bookings
 
-An exclusion constraint on the `bookings` table rejects a new row if an active (not cancelled) booking on the same court has an overlapping time range (`EXCLUDE USING gist (court_id WITH =, time_slot WITH &&) WHERE (cancelled_at IS NULL)`). Postgres checks the constraint as part of the insert, not in a separate read before it, so when two requests come at the same instant, the second one waits for the first one to commit and then fails. The API then returns `409 Conflict`.
+An exclusion constraint on the `bookings` table rejects a new row if an active (not cancelled) booking on the same court has an overlapping time range (`EXCLUDE USING gist (court_id WITH =, time_slot WITH &&) WHERE (cancelled_at IS NULL)`). Postgres checks the constraint as part of the insert, not in a separate read before it, so when two requests come at the same instant, the second one waits for the first one to commit and then fails.
 
 ### Why there is no test for double bookings
 
