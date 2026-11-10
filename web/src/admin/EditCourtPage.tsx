@@ -2,18 +2,18 @@ import { useQuery } from "@tanstack/react-query";
 import { Link, useNavigate } from "@tanstack/react-router";
 import type { SubmitEvent } from "react";
 import { useState } from "react";
-import { readErrorMessage } from "./api/client.ts";
-import type { AdminCourt } from "./api/courts.ts";
+import { readErrorMessage } from "../api/client.ts";
+import type { AdminCourt } from "../api/courts.ts";
 import {
   buildAdminCourtQueryOptions,
   COURT_NAME_MAX_LENGTH,
   HOURLY_PRICE_MAX_EUROS,
   HOURLY_PRICE_MIN_EUROS,
   useEditCourtDetails,
-} from "./api/courts.ts";
-import { formatEurosInput, parseEurosToCents } from "./money.ts";
-import { SPORT_EMOJIS, SPORT_LABELS } from "./sports.ts";
-import { INPUT_CLASS_NAME } from "./styles.ts";
+} from "../api/courts.ts";
+import { formatEurosInput, parseEurosToCents } from "../shared/money.ts";
+import { SPORT_EMOJIS, SPORT_LABELS } from "../shared/sports.ts";
+import { INPUT_CLASS_NAME } from "../shared/styles.ts";
 
 type CourtDetailsForm = {
   name: string;

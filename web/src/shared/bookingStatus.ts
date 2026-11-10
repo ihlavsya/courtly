@@ -1,4 +1,4 @@
-import type { DayBooking, PlayerBooking } from "./api/bookings.ts";
+import type { DayBooking, PlayerBooking } from "../api/bookings.ts";
 
 type BookingStatus = "booked" | "cancelled";
 

@@ -1,6 +1,6 @@
 import { useEffect, useRef } from "react";
-import { useCancelBooking } from "./api/bookings.ts";
-import { readErrorMessage } from "./api/client.ts";
+import { useCancelBooking } from "../api/bookings.ts";
+import { readErrorMessage } from "../api/client.ts";
 
 type CancelErrorDialogProps = {
   message: string | undefined;

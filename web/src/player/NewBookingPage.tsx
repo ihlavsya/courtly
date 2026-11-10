@@ -1,10 +1,10 @@
 import { useQuery } from "@tanstack/react-query";
 import { useState } from "react";
-import type { Court } from "./api/courts.ts";
-import { activeCourtsQueryOptions } from "./api/courts.ts";
+import type { Court } from "../api/courts.ts";
+import { activeCourtsQueryOptions } from "../api/courts.ts";
 import { CourtSlotPicker } from "./CourtSlotPicker.tsx";
-import { formatPrice } from "./money.ts";
-import { SPORT_EMOJIS } from "./sports.ts";
+import { formatPrice } from "../shared/money.ts";
+import { SPORT_EMOJIS } from "../shared/sports.ts";
 
 type CourtTileProps = {
   court: Court;

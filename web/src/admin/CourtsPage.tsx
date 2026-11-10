@@ -1,10 +1,10 @@
 import { useQuery } from "@tanstack/react-query";
 import { Link } from "@tanstack/react-router";
-import type { AdminCourt } from "./api/courts.ts";
-import { adminCourtsQueryOptions } from "./api/courts.ts";
-import { formatPrice } from "./money.ts";
-import { SPORT_EMOJIS } from "./sports.ts";
-import { BADGE_CLASS_NAME, TABLE_CELL_CLASS_NAME } from "./styles.ts";
+import type { AdminCourt } from "../api/courts.ts";
+import { adminCourtsQueryOptions } from "../api/courts.ts";
+import { formatPrice } from "../shared/money.ts";
+import { SPORT_EMOJIS } from "../shared/sports.ts";
+import { BADGE_CLASS_NAME, TABLE_CELL_CLASS_NAME } from "../shared/styles.ts";
 
 const ACTION_CLASS_NAME = "rounded-md border border-slate-300 px-3 py-1 text-sm font-medium text-slate-700 hover:bg-slate-50";
 

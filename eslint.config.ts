@@ -53,7 +53,7 @@ export default defineConfig(globalIgnores(["dist/", "**/*.generated.ts"]), {
     ],
   },
 }, {
-  files: ["web/src/router.tsx"],
+  files: ["web/src/app/router.tsx"],
   rules: {
     "@typescript-eslint/consistent-type-definitions": "off",
   },

@@ -1,17 +1,17 @@
 import { Link, useNavigate } from "@tanstack/react-router";
 import type { SubmitEvent } from "react";
 import { useState } from "react";
-import { readErrorMessage } from "./api/client.ts";
-import type { SportType } from "./api/courts.ts";
+import { readErrorMessage } from "../api/client.ts";
+import type { SportType } from "../api/courts.ts";
 import {
   COURT_NAME_MAX_LENGTH,
   HOURLY_PRICE_MAX_EUROS,
   HOURLY_PRICE_MIN_EUROS,
   useCreateCourt,
-} from "./api/courts.ts";
-import { parseEurosToCents } from "./money.ts";
-import { SPORT_EMOJIS, SPORT_LABELS, SPORT_TYPES } from "./sports.ts";
-import { INPUT_CLASS_NAME } from "./styles.ts";
+} from "../api/courts.ts";
+import { parseEurosToCents } from "../shared/money.ts";
+import { SPORT_EMOJIS, SPORT_LABELS, SPORT_TYPES } from "../shared/sports.ts";
+import { INPUT_CLASS_NAME } from "../shared/styles.ts";
 
 type NewCourtForm = {
   name: string;

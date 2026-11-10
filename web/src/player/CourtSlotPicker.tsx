@@ -1,12 +1,12 @@
 import { useQuery } from "@tanstack/react-query";
 import { useState } from "react";
-import type { Booking, CourtSlot, DurationHours, TimeRange } from "./api/bookings.ts";
-import { buildCourtDaySlotsQueryOptions, useCreateBooking } from "./api/bookings.ts";
-import { readErrorMessage } from "./api/client.ts";
-import type { Court } from "./api/courts.ts";
+import type { Booking, CourtSlot, DurationHours, TimeRange } from "../api/bookings.ts";
+import { buildCourtDaySlotsQueryOptions, useCreateBooking } from "../api/bookings.ts";
+import { readErrorMessage } from "../api/client.ts";
+import type { Court } from "../api/courts.ts";
 import { BookingConfirmationDialog } from "./BookingConfirmationDialog.tsx";
-import { formatCourtHour, formatHourRange, listBookingDays, readCourtDate } from "./courtTime.ts";
-import { formatPrice } from "./money.ts";
+import { formatCourtHour, formatHourRange, listBookingDays, readCourtDate } from "../shared/courtTime.ts";
+import { formatPrice } from "../shared/money.ts";
 
 type BookingDraft = {
   date: string;

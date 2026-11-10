@@ -1,4 +1,4 @@
-import type { SportType } from "./api/courts.ts";
+import type { SportType } from "../api/courts.ts";
 
 export const SPORT_EMOJIS: Record<SportType, string> = {
   tennis: "🎾",

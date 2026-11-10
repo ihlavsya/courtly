@@ -1,4 +1,4 @@
-import type { TimeRange } from "./api/bookings.ts";
+import type { TimeRange } from "../api/bookings.ts";
 
 export type BookingDay = {
   date: string;

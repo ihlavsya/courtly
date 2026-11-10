@@ -1,12 +1,12 @@
 import { useQuery } from "@tanstack/react-query";
 import { useState } from "react";
-import type { CourtDayReport, DayBooking } from "./api/bookings.ts";
-import { buildDayReportQueryOptions } from "./api/bookings.ts";
-import { BOOKING_STATUS_STYLES, readBookingStatus } from "./bookingStatus.ts";
-import { formatHourRange, readCourtDate, shiftDate } from "./courtTime.ts";
-import { formatPrice } from "./money.ts";
-import { SPORT_EMOJIS } from "./sports.ts";
-import { BADGE_CLASS_NAME, TABLE_CELL_CLASS_NAME } from "./styles.ts";
+import type { CourtDayReport, DayBooking } from "../api/bookings.ts";
+import { buildDayReportQueryOptions } from "../api/bookings.ts";
+import { BOOKING_STATUS_STYLES, readBookingStatus } from "../shared/bookingStatus.ts";
+import { formatHourRange, readCourtDate, shiftDate } from "../shared/courtTime.ts";
+import { formatPrice } from "../shared/money.ts";
+import { SPORT_EMOJIS } from "../shared/sports.ts";
+import { BADGE_CLASS_NAME, TABLE_CELL_CLASS_NAME } from "../shared/styles.ts";
 
 type DayPickerProps = {
   date: string;

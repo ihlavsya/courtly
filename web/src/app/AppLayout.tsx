@@ -1,8 +1,8 @@
 import { useQuery } from "@tanstack/react-query";
 import type { LinkProps } from "@tanstack/react-router";
 import { Link, Outlet } from "@tanstack/react-router";
-import type { UserRole } from "./api/auth.ts";
-import { currentSessionQueryOptions } from "./api/auth.ts";
+import type { UserRole } from "../api/auth.ts";
+import { currentSessionQueryOptions } from "../api/auth.ts";
 
 type MenuItem = {
   label: string;

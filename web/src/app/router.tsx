@@ -1,15 +1,15 @@
 import { createRootRoute, createRoute, createRouter, Outlet, redirect } from "@tanstack/react-router";
-import type { UserRole } from "./api/auth.ts";
-import { currentSessionQueryOptions } from "./api/auth.ts";
-import { queryClient } from "./api/client.ts";
+import type { UserRole } from "../api/auth.ts";
+import { currentSessionQueryOptions } from "../api/auth.ts";
+import { queryClient } from "../api/client.ts";
 import { AppLayout } from "./AppLayout.tsx";
-import { CourtsPage } from "./CourtsPage.tsx";
-import { DayReportPage } from "./DayReportPage.tsx";
-import { EditCourtPage } from "./EditCourtPage.tsx";
+import { CourtsPage } from "../admin/CourtsPage.tsx";
+import { DayReportPage } from "../admin/DayReportPage.tsx";
+import { EditCourtPage } from "../admin/EditCourtPage.tsx";
 import { LoginPage } from "./LoginPage.tsx";
-import { MyBookingsPage } from "./MyBookingsPage.tsx";
-import { NewBookingPage } from "./NewBookingPage.tsx";
-import { NewCourtPage } from "./NewCourtPage.tsx";
+import { MyBookingsPage } from "../player/MyBookingsPage.tsx";
+import { NewBookingPage } from "../player/NewBookingPage.tsx";
+import { NewCourtPage } from "../admin/NewCourtPage.tsx";
 
 declare module "@tanstack/react-router" {
   interface Register {
