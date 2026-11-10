@@ -18,15 +18,6 @@ const BOOKING_COLUMNS = [
   sql<Date>`upper(bookings.time_slot)`.as("endsAt"),
 ] as const;
 
-export function findActiveCourt(courtId: number) {
-  return db
-    .selectFrom("courts")
-    .select(["courts.id", "courts.hourlyPriceCents", "courts.opensAt", "courts.closesAt"])
-    .where("courts.id", "=", courtId)
-    .where("courts.isActive", "=", true)
-    .executeTakeFirst();
-}
-
 export function insertBooking({ slot, ...booking }: NewBooking) {
   return db
     .insertInto("bookings")

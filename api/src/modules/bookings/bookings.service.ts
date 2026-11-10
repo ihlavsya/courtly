@@ -4,13 +4,13 @@ import {
   buildBookableSlot,
 } from "@modules/bookings/bookings.policy.ts";
 import {
-  findActiveCourt,
   findBookingOfUser,
   insertBooking,
   listBookingsOfUser,
   markBookingCancelled,
 } from "@modules/bookings/bookings.repository.ts";
 import type { CreateBookingRequest } from "@modules/bookings/bookings.schema.ts";
+import { findActiveCourt } from "@modules/courts/index.ts";
 import { ConflictError, NotFoundError } from "@shared/errors.ts";
 
 export async function createBooking(
