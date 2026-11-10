@@ -40,6 +40,9 @@ type CancellableBooking = {
 };
 
 const MS_PER_HOUR = 60 * 60 * 1000;
+const MS_PER_DAY = 24 * MS_PER_HOUR;
+const MIDNIGHT = "00:00:00";
+const ISO_DATE_LENGTH = "2026-01-01".length;
 const SLOT_MS = 1 * MS_PER_HOUR;
 const CANCELLATION_CUTOFF_HOURS = 2;
 const HOURS_MINUTES_LENGTH = "08:00".length;
@@ -89,6 +92,13 @@ export function buildOpenHoursRange(
   return {
     startsAt: buildCourtInstant(date, opensAt),
     endsAt: buildCourtInstant(date, closesAt),
+  };
+}
+
+export function buildCourtDayRange(date: string): TimeRange {
+  return {
+    startsAt: buildCourtInstant(date, MIDNIGHT),
+    endsAt: buildCourtInstant(readNextDate(date), MIDNIGHT),
   };
 }
 
@@ -142,6 +152,12 @@ function checkIsBooked(slot: BookingSlot, bookedSlots: BookingSlot[]) {
     (bookedSlot) =>
       slot.startsAt < bookedSlot.endsAt && bookedSlot.startsAt < slot.endsAt,
   );
+}
+
+function readNextDate(date: string) {
+  const nextDayAsUtc = new Date(new Date(`${date}T${MIDNIGHT}Z`).getTime() + MS_PER_DAY);
+
+  return nextDayAsUtc.toISOString().slice(0, ISO_DATE_LENGTH);
 }
 
 function buildCourtInstant(date: string, time: string) {

@@ -1,4 +1,5 @@
 import { sql } from "kysely";
+import type { DayReportBooking } from "@modules/bookings/bookings.day-report.ts";
 import type { BookingSlot, TimeRange } from "@modules/bookings/bookings.policy.ts";
 import { db } from "@shared/db.ts";
 
@@ -62,6 +63,16 @@ export function listBookingsOfUser(userId: string) {
     .innerJoin("courts", "courts.id", "bookings.courtId")
     .select([...BOOKING_COLUMNS, "courts.name as courtName", "courts.sportType"])
     .where("bookings.userId", "=", userId)
+    .orderBy("startsAt")
+    .execute();
+}
+
+export function listBookingsInRange(range: TimeRange): Promise<DayReportBooking[]> {
+  return db
+    .selectFrom("bookings")
+    .innerJoin("users", "users.id", "bookings.userId")
+    .select([...BOOKING_COLUMNS, "users.email as playerEmail"])
+    .where(sql<boolean>`bookings.time_slot && tstzrange(${range.startsAt}, ${range.endsAt}, '[)')`)
     .orderBy("startsAt")
     .execute();
 }

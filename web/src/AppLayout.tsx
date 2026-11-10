@@ -11,7 +11,7 @@ type MenuItem = {
 
 const MENU_ITEMS_BY_ROLE: Record<UserRole, MenuItem[]> = {
   player: [{ label: "Book a court", path: "/bookings/new" }, { label: "My bookings", path: "/bookings" }],
-  admin: [{ label: "Courts", path: "/courts" }],
+  admin: [{ label: "Courts", path: "/courts" }, { label: "Bookings", path: "/day-bookings" }],
 };
 
 export function AppLayout({ role }: { role: UserRole }) {

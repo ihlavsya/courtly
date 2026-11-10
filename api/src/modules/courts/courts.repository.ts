@@ -16,6 +16,14 @@ export function listActiveCourts() {
     .execute();
 }
 
+export function listCourts() {
+  return db
+    .selectFrom("courts")
+    .select(["courts.id", "courts.name", "courts.sportType", "courts.isActive"])
+    .orderBy("courts.name")
+    .execute();
+}
+
 export function findActiveCourt(courtId: number) {
   return db
     .selectFrom("courts")

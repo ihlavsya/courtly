@@ -3,10 +3,12 @@ import {
   availabilityQuerySchema,
   bookingIdParamsSchema,
   createBookingRequestSchema,
+  dayReportQuerySchema,
 } from "@modules/bookings/bookings.schema.ts";
 import {
   cancelBooking,
   createBooking,
+  getDayReport,
   listMyBookings,
   listSlotsOfCourt,
 } from "@modules/bookings/bookings.service.ts";
@@ -37,4 +39,11 @@ export async function handleListAvailability(req: Request, res: Response) {
   const slots = await listSlotsOfCourt(availabilityQuery);
 
   res.json({ slots });
+}
+
+export async function handleGetDayReport(req: Request, res: Response) {
+  const { date } = dayReportQuerySchema.parse(req.query);
+  const dayReport = await getDayReport(date);
+
+  res.json(dayReport);
 }

@@ -2,6 +2,7 @@ import { Router } from "express";
 import {
   handleCancelBooking,
   handleCreateBooking,
+  handleGetDayReport,
   handleListAvailability,
   handleListMyBookings,
 } from "@modules/bookings/bookings.controller.ts";
@@ -15,3 +16,9 @@ bookingsRouter.get("/", handleListMyBookings);
 bookingsRouter.get("/availability", handleListAvailability);
 bookingsRouter.post("/", handleCreateBooking);
 bookingsRouter.post("/:bookingId/cancel", handleCancelBooking);
+
+export const adminBookingsRouter = Router();
+
+adminBookingsRouter.use(requireAuth, requireRole("admin"));
+
+adminBookingsRouter.get("/", handleGetDayReport);

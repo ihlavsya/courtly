@@ -1,6 +1,6 @@
 import express from "express";
 import { authRouter } from "@modules/auth/index.ts";
-import { bookingsRouter } from "@modules/bookings/index.ts";
+import { adminBookingsRouter, bookingsRouter } from "@modules/bookings/index.ts";
 import { courtsRouter } from "@modules/courts/index.ts";
 import { env } from "@shared/env.ts";
 import { handleError } from "@shared/errors.ts";
@@ -10,6 +10,7 @@ const app = express();
 app.disable("x-powered-by");
 app.use(express.json());
 app.use("/auth", authRouter);
+app.use("/admin/bookings", adminBookingsRouter);
 app.use("/bookings", bookingsRouter);
 app.use("/courts", courtsRouter);
 app.use(handleError);

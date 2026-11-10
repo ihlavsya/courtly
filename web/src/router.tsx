@@ -4,6 +4,7 @@ import { currentSessionQueryOptions } from "./api/auth.ts";
 import { queryClient } from "./api/client.ts";
 import { AppLayout } from "./AppLayout.tsx";
 import { CourtsPage } from "./CourtsPage.tsx";
+import { DayReportPage } from "./DayReportPage.tsx";
 import { LoginPage } from "./LoginPage.tsx";
 import { MyBookingsPage } from "./MyBookingsPage.tsx";
 import { NewBookingPage } from "./NewBookingPage.tsx";
@@ -66,12 +67,18 @@ const courtsRoute = createRoute({
   component: CourtsPage,
 });
 
+const dayReportRoute = createRoute({
+  getParentRoute: () => adminRoute,
+  path: "/day-bookings",
+  component: DayReportPage,
+});
+
 export const router = createRouter({
   routeTree: rootRoute.addChildren([
     homeRoute,
     loginRoute,
     playerRoute.addChildren([newBookingRoute, myBookingsRoute]),
-    adminRoute.addChildren([courtsRoute]),
+    adminRoute.addChildren([courtsRoute, dayReportRoute]),
   ]),
 });
 

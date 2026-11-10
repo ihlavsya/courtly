@@ -4,6 +4,7 @@ import {
   ALREADY_CANCELLED_MESSAGE,
   assertBookingCanBeCancelled,
   type BookingSlot,
+  buildCourtDayRange,
   listCourtDaySlots,
   type SlotStatus,
 } from "@modules/bookings/bookings.policy.ts";
@@ -147,5 +148,31 @@ describe("listCourtDaySlots", () => {
 
     assert.equal(slots.length, 15);
     assert.ok(slots.every((slot) => slot.status === "past"));
+  });
+});
+
+describe("buildCourtDayRange", () => {
+  function listDayRangeEdges(date: string) {
+    const { startsAt, endsAt } = buildCourtDayRange(date);
+
+    return [startsAt.toISOString(), endsAt.toISOString()];
+  }
+
+  it("covers a Lisbon winter day from midnight to midnight", () => {
+    assert.deepEqual(listDayRangeEdges("2026-11-12"), ["2026-11-12T00:00:00.000Z", "2026-11-13T00:00:00.000Z"]);
+  });
+
+  it("uses Lisbon summer time, so midnight in Lisbon is 23:00 UTC of the day before", () => {
+    assert.deepEqual(listDayRangeEdges("2026-07-15"), ["2026-07-14T23:00:00.000Z", "2026-07-15T23:00:00.000Z"]);
+  });
+
+  it("covers 23 hours on the day the clocks go forward and 25 hours on the day they go back", () => {
+    assert.deepEqual(
+      [listDayRangeEdges("2026-03-29"), listDayRangeEdges("2026-10-25")],
+      [
+        ["2026-03-29T00:00:00.000Z", "2026-03-29T23:00:00.000Z"],
+        ["2026-10-24T23:00:00.000Z", "2026-10-26T00:00:00.000Z"],
+      ],
+    );
   });
 });

@@ -11,6 +11,10 @@ export const availabilityQuerySchema = z.object({
   date: z.iso.date(),
 });
 
+export const dayReportQuerySchema = z.object({
+  date: z.iso.date(),
+});
+
 export const bookingIdParamsSchema = z.object({
   bookingId: z.uuid(),
 });

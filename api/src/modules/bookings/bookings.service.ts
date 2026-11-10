@@ -1,7 +1,9 @@
+import { buildDayReport } from "@modules/bookings/bookings.day-report.ts";
 import {
   ALREADY_CANCELLED_MESSAGE,
   assertBookingCanBeCancelled,
   buildBookableSlot,
+  buildCourtDayRange,
   buildOpenHoursRange,
   listCourtDaySlots,
 } from "@modules/bookings/bookings.policy.ts";
@@ -9,6 +11,7 @@ import {
   findBookingOfUser,
   insertBooking,
   listBookedSlotsOfCourt,
+  listBookingsInRange,
   listBookingsOfUser,
   markBookingCancelled,
 } from "@modules/bookings/bookings.repository.ts";
@@ -16,7 +19,7 @@ import type {
   AvailabilityQuery,
   CreateBookingRequest,
 } from "@modules/bookings/bookings.schema.ts";
-import { findActiveCourt } from "@modules/courts/index.ts";
+import { findActiveCourt, listCourts } from "@modules/courts/index.ts";
 import { ConflictError, NotFoundError } from "@shared/errors.ts";
 
 export async function createBooking(
@@ -84,6 +87,15 @@ export async function listSlotsOfCourt({
     { date, bookedSlots },
     { courtHours: court, now: new Date() },
   );
+}
+
+export async function getDayReport(date: string) {
+  const [courts, bookings] = await Promise.all([
+    listCourts(),
+    listBookingsInRange(buildCourtDayRange(date)),
+  ]);
+
+  return { date, ...buildDayReport({ courts, bookings }) };
 }
 
 function splitBookingsByTime<SortedBooking extends { endsAt: Date }>(

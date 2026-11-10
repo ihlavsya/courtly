@@ -46,6 +46,12 @@ export function listBookingDays(now: Date, dayCount: number): BookingDay[] {
   );
 }
 
+export function shiftDate(date: string, dayCount: number) {
+  const shiftedDayAsUtc = new Date(new Date(`${date}T00:00:00Z`).getTime() + dayCount * MS_PER_DAY);
+
+  return shiftedDayAsUtc.toISOString().slice(0, ISO_DATE_LENGTH);
+}
+
 export function readCourtDate(instant: Date) {
   return COURT_DATE_FORMAT.format(instant);
 }
