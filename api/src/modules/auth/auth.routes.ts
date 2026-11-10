@@ -1,6 +1,6 @@
 import { Router } from "express";
 import { handleGetCurrentUser, handleLogin } from "@modules/auth/auth.controller.ts";
-import { requireAuth } from "@shared/auth.middleware.ts";
+import { requireAuth } from "@modules/auth/auth.middleware.ts";
 
 export const authRouter = Router();
 

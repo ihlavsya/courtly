@@ -1,7 +1,7 @@
 import type { CookieOptions, Request, Response } from "express";
 import { loginRequestSchema } from "@modules/auth/auth.schema.ts";
 import { logIn, SESSION_CONFIG } from "@modules/auth/auth.service.ts";
-import type { AuthenticatedLocals } from "@shared/auth.middleware.ts";
+import type { AuthenticatedLocals } from "@modules/auth/auth.middleware.ts";
 import { env } from "@shared/env.ts";
 
 export async function handleLogin(req: Request, res: Response) {

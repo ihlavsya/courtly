@@ -4,7 +4,7 @@ import {
   handleCreateBooking,
   handleListMyBookings,
 } from "@modules/bookings/bookings.controller.ts";
-import { requireAuth, requireRole } from "@shared/auth.middleware.ts";
+import { requireAuth, requireRole } from "@modules/auth/index.ts";
 
 export const bookingsRouter = Router();
 
