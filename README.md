@@ -1,8 +1,15 @@
 ## How to run
 
-Run `docker compose up`, then open http://localhost:8080.
+Needs Docker and free ports `8080`, `5432`.
 
-Demo users (password `courtly-demo`): `player@courtly.test`, `admin@courtly.test`.
+```sh
+git clone <repo-url> courtly && cd courtly
+docker compose up
+```
+
+- App: http://localhost:8080 (API at `/api/`)
+- Users (password `courtly-demo`): `player@courtly.test`, `admin@courtly.test`
+- Reset data: `docker compose down -v`
 
 ## Why a React SPA (Vite) and not Next.js
 
