@@ -9,8 +9,7 @@ import {
 import type { LoginCredentials } from "@modules/auth/auth.schema.ts";
 import { UnauthorizedError } from "@shared/errors.ts";
 
-export const SESSION_CONFIG = {
-  cookieName: "session",
+const SESSION_CONFIG = {
   lifetimeMs: 7 * 24 * 60 * 60 * 1000,
   tokenByteLength: 32,
 } as const;
