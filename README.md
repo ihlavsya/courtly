@@ -25,3 +25,7 @@ I selected a relational database instead of MongoDB, because foreign keys make s
 ## How I prevent double bookings
 
 An exclusion constraint on the `bookings` table rejects a new row if an active (not cancelled) booking on the same court has an overlapping time range (`EXCLUDE USING gist (court_id WITH =, time_slot WITH &&) WHERE (cancelled_at IS NULL)`). Postgres checks the constraint as part of the insert, not in a separate read before it, so when two requests come at the same instant, the second one waits for the first one to commit and then fails. The API then returns `409 Conflict`.
+
+### Why there is no test for double bookings
+
+The double-booking rule is one SQL constraint, not TypeScript code, so a unit test cannot run it. A test that sends two bookings at the same time would check that Postgres works, not my code. The SQL shows each rule: same-court bookings cannot overlap (`court_id WITH =`, `time_slot WITH &&`), back-to-back bookings are allowed (`'[)'` ranges), and cancelled bookings free the slot (`WHERE (cancelled_at IS NULL)`). With more time, I would add a database test for these rules, so a later change to the constraint cannot break them unnoticed.
