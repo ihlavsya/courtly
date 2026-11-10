@@ -1,6 +1,6 @@
 import { keepPreviousData, queryOptions, useMutation } from "@tanstack/react-query";
 import { postJson, queryClient, requestJson } from "./client.ts";
-import type { Court, SportType } from "./courts.ts";
+import type { AdminCourt, SportType } from "./courts.ts";
 
 export type TimeRange = {
   startsAt: string;
@@ -35,7 +35,7 @@ export type DayBooking = Booking & {
 };
 
 export type CourtDayReport = {
-  court: Pick<Court, "id" | "name" | "sportType"> & { status: "active" | "deactivated" };
+  court: Pick<AdminCourt, "id" | "name" | "sportType" | "isActive">;
   expectedRevenueCents: number;
   bookings: DayBooking[];
 };

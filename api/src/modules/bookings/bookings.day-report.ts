@@ -17,8 +17,6 @@ type DayReportSources = {
   bookings: DayReportBooking[];
 };
 
-type CourtStatus = "active" | "deactivated";
-
 export function buildDayReport({ courts, bookings }: DayReportSources) {
   const courtReports = courts.map((court) =>
     buildCourtReport(
@@ -34,11 +32,9 @@ export function buildDayReport({ courts, bookings }: DayReportSources) {
   return { totalExpectedRevenueCents, courts: courtReports };
 }
 
-function buildCourtReport({ isActive, ...court }: DayReportCourt, courtBookings: DayReportBooking[]) {
-  const status: CourtStatus = isActive ? "active" : "deactivated";
-
+function buildCourtReport(court: DayReportCourt, courtBookings: DayReportBooking[]) {
   return {
-    court: { ...court, status },
+    court,
     expectedRevenueCents: computeExpectedRevenueCents(courtBookings),
     bookings: courtBookings,
   };

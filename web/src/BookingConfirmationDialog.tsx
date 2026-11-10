@@ -1,7 +1,9 @@
 import { useEffect, useRef } from "react";
 import type { Booking } from "./api/bookings.ts";
 import type { Court } from "./api/courts.ts";
-import { formatBookingTime, formatPrice, SPORT_EMOJIS } from "./courtDisplay.ts";
+import { formatBookingTime } from "./courtTime.ts";
+import { formatPrice } from "./money.ts";
+import { SPORT_EMOJIS } from "./sports.ts";
 
 type BookingConfirmationDialogProps = {
   court: Court;

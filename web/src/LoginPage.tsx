@@ -4,7 +4,7 @@ import { useState } from "react";
 import type { LoginCredentials } from "./api/auth.ts";
 import { useLogIn } from "./api/auth.ts";
 import { ApiError } from "./api/client.ts";
-import { INPUT_CLASS_NAME } from "./formStyles.ts";
+import { INPUT_CLASS_NAME } from "./styles.ts";
 
 const EMPTY_CREDENTIALS: LoginCredentials = { email: "", password: "" };
 const FIRST_SERVER_ERROR_STATUS = 500;

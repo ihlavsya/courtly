@@ -2,9 +2,10 @@ import { useQuery } from "@tanstack/react-query";
 import { Link } from "@tanstack/react-router";
 import type { AdminCourt } from "./api/courts.ts";
 import { adminCourtsQueryOptions } from "./api/courts.ts";
-import { formatPrice, SPORT_EMOJIS } from "./courtDisplay.ts";
+import { formatPrice } from "./money.ts";
+import { SPORT_EMOJIS } from "./sports.ts";
+import { BADGE_CLASS_NAME, TABLE_CELL_CLASS_NAME } from "./styles.ts";
 
-const CELL_CLASS_NAME = "px-4 py-3";
 const ACTION_CLASS_NAME = "rounded-md border border-slate-300 px-3 py-1 text-sm font-medium text-slate-700 hover:bg-slate-50";
 
 export function CourtsPage() {
@@ -40,9 +41,9 @@ function CourtsTable({ courts }: { courts: AdminCourt[] }) {
       <table className="w-full text-left">
         <thead className="border-b border-slate-200 text-sm text-slate-500">
           <tr>
-            <th className={`${CELL_CLASS_NAME} font-medium`}>Court</th>
-            <th className={`${CELL_CLASS_NAME} font-medium`}>Price per hour</th>
-            <th className={`${CELL_CLASS_NAME} font-medium`}>Actions</th>
+            <th className={`${TABLE_CELL_CLASS_NAME} font-medium`}>Court</th>
+            <th className={`${TABLE_CELL_CLASS_NAME} font-medium`}>Price per hour</th>
+            <th className={`${TABLE_CELL_CLASS_NAME} font-medium`}>Actions</th>
           </tr>
         </thead>
         <tbody className="divide-y divide-slate-100">
@@ -58,21 +59,21 @@ function CourtsTable({ courts }: { courts: AdminCourt[] }) {
 function CourtRow({ court }: { court: AdminCourt }) {
   return (
     <tr>
-      <td className={CELL_CLASS_NAME}>
+      <td className={TABLE_CELL_CLASS_NAME}>
         <span className="flex items-center gap-3">
           <span role="img" aria-label={court.sportType}>
             {SPORT_EMOJIS[court.sportType]}
           </span>
           {court.name}
           {!court.isActive && (
-            <span className="rounded-full bg-amber-100 px-2 py-0.5 text-xs font-medium text-amber-800">
+            <span className={`${BADGE_CLASS_NAME} bg-amber-100 text-amber-800`}>
               Deactivated
             </span>
           )}
         </span>
       </td>
-      <td className={CELL_CLASS_NAME}>{formatPrice(court.hourlyPriceCents)}</td>
-      <td className={`${CELL_CLASS_NAME} space-x-2 whitespace-nowrap`}>
+      <td className={TABLE_CELL_CLASS_NAME}>{formatPrice(court.hourlyPriceCents)}</td>
+      <td className={`${TABLE_CELL_CLASS_NAME} space-x-2 whitespace-nowrap`}>
         <Link to="/day-bookings" className={ACTION_CLASS_NAME}>
           Preview bookings
         </Link>

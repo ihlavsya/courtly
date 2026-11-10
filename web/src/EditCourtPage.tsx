@@ -11,8 +11,9 @@ import {
   HOURLY_PRICE_MIN_EUROS,
   useEditCourtDetails,
 } from "./api/courts.ts";
-import { formatEurosInput, parseEurosToCents, SPORT_EMOJIS, SPORT_LABELS } from "./courtDisplay.ts";
-import { INPUT_CLASS_NAME } from "./formStyles.ts";
+import { formatEurosInput, parseEurosToCents } from "./money.ts";
+import { SPORT_EMOJIS, SPORT_LABELS } from "./sports.ts";
+import { INPUT_CLASS_NAME } from "./styles.ts";
 
 type CourtDetailsForm = {
   name: string;

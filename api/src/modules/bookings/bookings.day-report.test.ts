@@ -67,7 +67,7 @@ describe("buildDayReport", () => {
       totalExpectedRevenueCents: 0,
       courts: [
         {
-          court: { id: 1, name: "Center Court", sportType: "tennis", status: "active" },
+          court: { id: 1, name: "Center Court", sportType: "tennis", isActive: true },
           expectedRevenueCents: 0,
           bookings: [],
         },
@@ -75,9 +75,9 @@ describe("buildDayReport", () => {
     });
   });
 
-  it("marks an inactive court as deactivated", () => {
+  it("keeps an inactive court in the report", () => {
     const report = buildDayReport({ courts: [SHUTTLE_HALL], bookings: [] });
 
-    assert.equal(report.courts[0]?.court.status, "deactivated");
+    assert.equal(report.courts[0]?.court.isActive, false);
   });
 });

@@ -2,29 +2,18 @@ import { useQuery } from "@tanstack/react-query";
 import { useState } from "react";
 import type { CourtDayReport, DayBooking } from "./api/bookings.ts";
 import { buildDayReportQueryOptions } from "./api/bookings.ts";
-import { formatHourRange, formatPrice, readCourtDate, shiftDate, SPORT_EMOJIS } from "./courtDisplay.ts";
-
-type BookingStatus = "booked" | "cancelled";
-
-type BookingStatusStyle = {
-  label: string;
-  badgeClassName: string;
-  rowClassName: string;
-};
+import { BOOKING_STATUS_STYLES, readBookingStatus } from "./bookingStatus.ts";
+import { formatHourRange, readCourtDate, shiftDate } from "./courtTime.ts";
+import { formatPrice } from "./money.ts";
+import { SPORT_EMOJIS } from "./sports.ts";
+import { BADGE_CLASS_NAME, TABLE_CELL_CLASS_NAME } from "./styles.ts";
 
 type DayPickerProps = {
   date: string;
   onChange: (date: string) => void;
 };
 
-const CELL_CLASS_NAME = "px-4 py-3";
 const DAY_BUTTON_CLASS_NAME = "rounded-md border border-slate-300 bg-white px-3 py-1.5 text-sm hover:bg-slate-100";
-const BADGE_CLASS_NAME = "rounded-full px-2 py-0.5 text-xs font-medium";
-
-const BOOKING_STATUS_STYLES: Record<BookingStatus, BookingStatusStyle> = {
-  booked: { label: "Booked", badgeClassName: "bg-emerald-100 text-emerald-800", rowClassName: "" },
-  cancelled: { label: "Cancelled", badgeClassName: "bg-slate-100 text-slate-500", rowClassName: "text-slate-400" },
-};
 
 export function DayReportPage() {
   const [date, setDate] = useState(() => readCourtDate(new Date()));
@@ -104,13 +93,13 @@ function CourtReportSection({ courtReport: { court, expectedRevenueCents, bookin
           {SPORT_EMOJIS[court.sportType]}
         </span>
         <h2 className="font-semibold">{court.name}</h2>
-        {court.status === "deactivated" && (
+        {!court.isActive && (
           <span className={`${BADGE_CLASS_NAME} bg-amber-100 text-amber-800`}>Deactivated</span>
         )}
         <span className="ml-auto font-semibold">{formatPrice(expectedRevenueCents)}</span>
       </header>
       {bookings.length === 0 ? (
-        <p className={`${CELL_CLASS_NAME} text-slate-500`}>No bookings</p>
+        <p className={`${TABLE_CELL_CLASS_NAME} text-slate-500`}>No bookings</p>
       ) : (
         <table className="w-full text-left">
           <tbody className="divide-y divide-slate-100">
@@ -129,16 +118,12 @@ function DayBookingRow({ booking }: { booking: DayBooking }) {
 
   return (
     <tr className={statusStyle.rowClassName}>
-      <td className={`${CELL_CLASS_NAME} whitespace-nowrap`}>{formatHourRange(booking)}</td>
-      <td className={CELL_CLASS_NAME}>{booking.playerEmail}</td>
-      <td className={CELL_CLASS_NAME}>{formatPrice(booking.priceCents)}</td>
-      <td className={`${CELL_CLASS_NAME} text-right`}>
+      <td className={`${TABLE_CELL_CLASS_NAME} whitespace-nowrap`}>{formatHourRange(booking)}</td>
+      <td className={TABLE_CELL_CLASS_NAME}>{booking.playerEmail}</td>
+      <td className={TABLE_CELL_CLASS_NAME}>{formatPrice(booking.priceCents)}</td>
+      <td className={`${TABLE_CELL_CLASS_NAME} text-right`}>
         <span className={`${BADGE_CLASS_NAME} ${statusStyle.badgeClassName}`}>{statusStyle.label}</span>
       </td>
     </tr>
   );
-}
-
-function readBookingStatus(booking: DayBooking): BookingStatus {
-  return booking.cancelledAt === undefined ? "booked" : "cancelled";
 }

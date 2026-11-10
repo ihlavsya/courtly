@@ -9,8 +9,9 @@ import {
   HOURLY_PRICE_MIN_EUROS,
   useCreateCourt,
 } from "./api/courts.ts";
-import { parseEurosToCents, SPORT_EMOJIS, SPORT_LABELS, SPORT_TYPES } from "./courtDisplay.ts";
-import { INPUT_CLASS_NAME } from "./formStyles.ts";
+import { parseEurosToCents } from "./money.ts";
+import { SPORT_EMOJIS, SPORT_LABELS, SPORT_TYPES } from "./sports.ts";
+import { INPUT_CLASS_NAME } from "./styles.ts";
 
 type NewCourtForm = {
   name: string;

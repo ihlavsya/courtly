@@ -3,7 +3,8 @@ import { useState } from "react";
 import type { Court } from "./api/courts.ts";
 import { activeCourtsQueryOptions } from "./api/courts.ts";
 import { CourtSlotPicker } from "./CourtSlotPicker.tsx";
-import { formatPrice, SPORT_EMOJIS } from "./courtDisplay.ts";
+import { formatPrice } from "./money.ts";
+import { SPORT_EMOJIS } from "./sports.ts";
 
 type CourtTileProps = {
   court: Court;

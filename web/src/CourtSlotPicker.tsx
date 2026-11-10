@@ -5,7 +5,8 @@ import { buildCourtDaySlotsQueryOptions, useCreateBooking } from "./api/bookings
 import { readErrorMessage } from "./api/client.ts";
 import type { Court } from "./api/courts.ts";
 import { BookingConfirmationDialog } from "./BookingConfirmationDialog.tsx";
-import { formatCourtHour, formatHourRange, formatPrice, listBookingDays, readCourtDate } from "./courtDisplay.ts";
+import { formatCourtHour, formatHourRange, listBookingDays, readCourtDate } from "./courtTime.ts";
+import { formatPrice } from "./money.ts";
 
 type BookingDraft = {
   date: string;

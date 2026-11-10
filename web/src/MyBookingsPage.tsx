@@ -3,16 +3,12 @@ import { Link } from "@tanstack/react-router";
 import type { ReactNode } from "react";
 import type { PlayerBooking } from "./api/bookings.ts";
 import { myBookingsQueryOptions } from "./api/bookings.ts";
+import { BOOKING_STATUS_STYLES, readBookingStatus } from "./bookingStatus.ts";
 import { CancelBookingButton } from "./CancelBookingButton.tsx";
-import { formatBookingTime, formatPrice, SPORT_EMOJIS } from "./courtDisplay.ts";
-
-type BookingStatus = "booked" | "cancelled";
-
-type BookingStatusStyle = {
-  label: string;
-  badgeClassName: string;
-  rowClassName: string;
-};
+import { formatBookingTime } from "./courtTime.ts";
+import { formatPrice } from "./money.ts";
+import { SPORT_EMOJIS } from "./sports.ts";
+import { BADGE_CLASS_NAME, TABLE_CELL_CLASS_NAME } from "./styles.ts";
 
 type BookingsSectionProps = {
   title: string;
@@ -30,12 +26,6 @@ type BookingRowProps = Pick<BookingsTableProps, "canCancel"> & {
   booking: PlayerBooking;
 };
 
-const CELL_CLASS_NAME = "px-4 py-3";
-
-const BOOKING_STATUS_STYLES: Record<BookingStatus, BookingStatusStyle> = {
-  booked: { label: "Booked", badgeClassName: "bg-emerald-100 text-emerald-800", rowClassName: "" },
-  cancelled: { label: "Cancelled", badgeClassName: "bg-slate-100 text-slate-500", rowClassName: "text-slate-400" },
-};
 
 export function MyBookingsPage() {
   const bookingsQuery = useQuery(myBookingsQueryOptions);
@@ -99,12 +89,12 @@ function BookingsTable({ bookings, canCancel }: BookingsTableProps) {
       <table className="w-full text-left">
         <thead className="border-b border-slate-200 text-sm text-slate-500">
           <tr>
-            <th className={`${CELL_CLASS_NAME} font-medium`}>When</th>
-            <th className={`${CELL_CLASS_NAME} font-medium`}>Court</th>
-            <th className={`${CELL_CLASS_NAME} font-medium`}>Price</th>
-            <th className={`${CELL_CLASS_NAME} font-medium`}>Status</th>
+            <th className={`${TABLE_CELL_CLASS_NAME} font-medium`}>When</th>
+            <th className={`${TABLE_CELL_CLASS_NAME} font-medium`}>Court</th>
+            <th className={`${TABLE_CELL_CLASS_NAME} font-medium`}>Price</th>
+            <th className={`${TABLE_CELL_CLASS_NAME} font-medium`}>Status</th>
             {canCancel && (
-              <th className={CELL_CLASS_NAME}>
+              <th className={TABLE_CELL_CLASS_NAME}>
                 <span className="sr-only">Actions</span>
               </th>
             )}
@@ -126,28 +116,24 @@ function BookingRow({ booking, canCancel }: BookingRowProps) {
 
   return (
     <tr className={statusStyle.rowClassName}>
-      <td className={`${CELL_CLASS_NAME} whitespace-nowrap`}>{formatBookingTime(booking)}</td>
-      <td className={CELL_CLASS_NAME}>
+      <td className={`${TABLE_CELL_CLASS_NAME} whitespace-nowrap`}>{formatBookingTime(booking)}</td>
+      <td className={TABLE_CELL_CLASS_NAME}>
         <span role="img" aria-label={booking.sportType} className="mr-2">
           {SPORT_EMOJIS[booking.sportType]}
         </span>
         {booking.courtName}
       </td>
-      <td className={CELL_CLASS_NAME}>{formatPrice(booking.priceCents)}</td>
-      <td className={CELL_CLASS_NAME}>
-        <span className={`rounded-full px-2 py-0.5 text-xs font-medium ${statusStyle.badgeClassName}`}>
+      <td className={TABLE_CELL_CLASS_NAME}>{formatPrice(booking.priceCents)}</td>
+      <td className={TABLE_CELL_CLASS_NAME}>
+        <span className={`${BADGE_CLASS_NAME} ${statusStyle.badgeClassName}`}>
           {statusStyle.label}
         </span>
       </td>
       {canCancel && (
-        <td className={`${CELL_CLASS_NAME} text-right`}>
+        <td className={`${TABLE_CELL_CLASS_NAME} text-right`}>
           {status === "booked" && <CancelBookingButton bookingId={booking.id} />}
         </td>
       )}
     </tr>
   );
-}
-
-function readBookingStatus(booking: PlayerBooking): BookingStatus {
-  return booking.cancelledAt === undefined ? "booked" : "cancelled";
 }
