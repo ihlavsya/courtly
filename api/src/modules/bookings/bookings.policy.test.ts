@@ -3,6 +3,7 @@ import { describe, it } from "node:test";
 import {
   ALREADY_CANCELLED_MESSAGE,
   assertBookingCanBeCancelled,
+  buildBookableSlot,
   type BookingSlot,
   buildCourtDayRange,
   listCourtDaySlots,
@@ -34,6 +35,7 @@ const TOO_LATE_ERROR = {
   status: 409,
   message: "A booking can be cancelled only up to 2 hours before its start time",
 };
+const OUTSIDE_HOURS_ERROR = { status: 422, message: "This court is open from 08:00 to 23:00 Lisbon time" };
 
 describe("assertBookingCanBeCancelled", () => {
   it("allows cancellation more than 2 hours before the start", () => {
@@ -66,6 +68,51 @@ describe("assertBookingCanBeCancelled", () => {
     assert.throws(() => {
       assertBookingCanBeCancelled(cancelledBooking, new Date("2026-11-09T09:00:00.000Z"));
     }, { status: 409, message: ALREADY_CANCELLED_MESSAGE });
+  });
+});
+
+describe("buildBookableSlot", () => {
+  function buildSlotStartingAt(startsAt: string, durationHours = 1, now = SLOT_CONTEXT.now) {
+    return buildBookableSlot({ startsAt: new Date(startsAt), durationHours }, { ...SLOT_CONTEXT, now });
+  }
+
+  it("accepts a booking that starts at opening time", () => {
+    assert.deepEqual(buildSlotStartingAt("2026-11-12T08:00:00.000Z"), {
+      startsAt: new Date("2026-11-12T08:00:00.000Z"),
+      endsAt: new Date("2026-11-12T09:00:00.000Z"),
+    });
+  });
+
+  it("accepts a 2-hour booking that ends exactly at closing time", () => {
+    assert.equal(buildSlotStartingAt("2026-11-12T21:00:00.000Z", 2).endsAt.toISOString(), "2026-11-12T23:00:00.000Z");
+  });
+
+  it("rejects a booking that starts before opening time", () => {
+    assert.throws(() => buildSlotStartingAt("2026-11-12T07:00:00.000Z"), OUTSIDE_HOURS_ERROR);
+  });
+
+  it("rejects a 2-hour booking that runs past closing time", () => {
+    assert.throws(() => buildSlotStartingAt("2026-11-12T22:00:00.000Z", 2), OUTSIDE_HOURS_ERROR);
+  });
+
+  it("uses Lisbon summer time, so 07:00 UTC is opening time in July", () => {
+    assert.doesNotThrow(() => buildSlotStartingAt("2026-07-15T07:00:00.000Z"));
+    assert.throws(() => buildSlotStartingAt("2026-07-15T06:00:00.000Z"), OUTSIDE_HOURS_ERROR);
+  });
+
+  it("rejects a booking that does not start on a whole hour", () => {
+    assert.throws(() => buildSlotStartingAt("2026-11-12T10:30:00.000Z"), {
+      status: 422,
+      message: "A booking must start on a whole hour",
+    });
+  });
+
+  it("rejects a booking that starts now or in the past", () => {
+    const now = new Date("2026-11-12T10:00:00.000Z");
+    const pastError = { status: 422, message: "A booking must start in the future" };
+
+    assert.throws(() => buildSlotStartingAt("2026-11-12T10:00:00.000Z", 1, now), pastError);
+    assert.throws(() => buildSlotStartingAt("2026-11-12T09:00:00.000Z", 1, now), pastError);
   });
 });
 

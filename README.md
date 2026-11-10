@@ -8,7 +8,7 @@ docker compose up
 ```
 
 - App: http://localhost:8080 (API at `/api/`)
-- Users (password `courtly-demo`): `player@courtly.test`, `admin@courtly.test`
+- Users (password `courtly-demo`): `player@courtly.test`, `player2@courtly.test`, `admin@courtly.test`
 
 ## Why a React SPA (Vite) and not Next.js
 
@@ -16,7 +16,7 @@ The assignment does not allow route handlers in the Next.js app, so with a separ
 
 ## Why Express and not Nest.js
 
-For a new long-lived project with many features and user permissions, I would pick Nest.js, because its standard structure makes the codebase predictable for LLMs. For this assignment I pick Express, only because I do not know Nest.js yet. I must be able to defend each line at the interview, and a few days is not enough to learn Nest.js and build the assignment to that level.
+For a new long-lived project with many features and user permissions, I would pick Nest.js, because its standard structure makes the codebase predictable for LLMs. For this assignment I pick Express, because with Nest.js I would have to learn the framework and build the app in the same few days. Express is simpler: it has fewer concepts (no modules, providers, decorators or dependency injection), and I already used it a bit, so I can explain and change each line at the interview.
 
 ## Why Postgres
 
